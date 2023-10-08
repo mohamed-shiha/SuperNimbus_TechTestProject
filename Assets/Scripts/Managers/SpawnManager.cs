@@ -9,23 +9,31 @@ public class SpawnManager : MonoBehaviour
     ObjectsSpawner<EnemyController> enemySpawner;
     ObjectsSpawner<Tower> towersSpawner;
 
-    public void SpawnBullet(Transform transform, SpawnData data)
+    public void Initialize()
+    {
+        bulletSpawner = new ObjectsSpawner<NormalBullet>((i) => MakeObject<NormalBullet>(i));
+        enemySpawner = new ObjectsSpawner<EnemyController>((i) => MakeObject<EnemyController>(i));
+        towersSpawner = new ObjectsSpawner<Tower>((i) => MakeObject<Tower>(i));
+
+    }
+
+    public void SpawnBullet(Vector2 pos, SpawnData data)
     {
         var bullet = bulletSpawner.GiveMeOne();
         bullet.SetData(data);
-        bullet.RestartAlive(transform, Vector2.right);
+        bullet.RestartAlive(pos, Vector2.right);
     }
 
-    public void SpawnEnemy(Transform transform, SpawnData data)
+    public void SpawnEnemy(Vector2 pos, SpawnData data)
     {
         var enemy = enemySpawner.GiveMeOne();
         enemy.SetData(data);
-        enemy.RestartAlive(transform, Vector2.left);
+        enemy.RestartAlive(pos, Vector2.left);
     }
 
-    internal T MakeObject<T>(int id) where T : WorldObject
+    internal T MakeObject<T>(int id = 0) where T : WorldObject
     {
-        T prefabe = (T)Prefabs.First(item => item.Data.ID == id);
+        T prefabe = Prefabs.OfType<T>().First();
         T result;
         if (prefabe == null)
         {
@@ -39,6 +47,7 @@ public class SpawnManager : MonoBehaviour
 
     public void TakeBackObject<T>(T returnedObject)
     {
+        Debug.Log("Called on " + returnedObject);
         if (returnedObject is NormalBullet bullet)
         {
             bulletSpawner.TakeBack(bullet);

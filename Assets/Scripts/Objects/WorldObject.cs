@@ -16,6 +16,7 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
     public virtual void OnDeath()
     {
         Debug.Log(string.Format($"The object with the ID: {Data.ID} Triggered OnDeath"));
+        GameManager.Instance.OnObjectDeath(this);
     }
 
     public void Die()
@@ -27,9 +28,9 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * random  : Vector3.one * -555 * random;
     }
 
-    public void RestartAlive(Transform newTransform, Vector2 dir)
+    public void RestartAlive(Vector2 newPos, Vector2 dir)
     {
-        transform.position = newTransform.position;
+        transform.position = newPos;
         // reset the health to be full health
         _data.CurrentHits = 0;
         //_data.MovementDirection = dir;

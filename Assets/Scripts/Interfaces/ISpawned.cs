@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum ObjectType
 {
+    NA,
     Bullet,
     Enemy,
     Tower
@@ -34,25 +35,8 @@ public struct SpawnData
 public interface ISpawned
 {
     public void SetData(SpawnData spawnData);
-    public void RestartAlive(Transform transform, Vector2 dir);
+    public void RestartAlive(Vector2 SpawnPos, Vector2 dir);
     public void Die();
-}
-
-public class NormalBullet : WorldObject
-{
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // if we hit an object 
-        if (collision.GetComponent<WorldObject>() is WorldObject other && other != null)
-        {
-            // if the object can take damage from this bullet then deal damage and recycle the bullet
-            if (other.GetHitFrom == ObjectType.Bullet)
-            {
-                other.GetHit();
-                Die();
-            }
-        }
-    }
 }
 
 
