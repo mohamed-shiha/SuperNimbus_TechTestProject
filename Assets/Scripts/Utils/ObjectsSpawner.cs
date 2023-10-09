@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObjectsSpawner<T> where T : MonoBehaviour
 {
-    static int counter = 0;
+    public int counter = 0;
     Stack<T> pool;
     Func<int, T> MakeObject;
     public Action<T> onTakeBack;

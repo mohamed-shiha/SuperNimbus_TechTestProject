@@ -4,8 +4,12 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
 {
 
     public ObjectType GetHitFrom;
+    [SerializeField] bool _UseDebugData;
     SpawnData _data;
-    public SpawnData Data { get { return _data; } private set { _data = value; } }
+    SpawnData _debugData = new SpawnData(0, 1, ObjectType.NA, "MockData", 3, 1);
+    public SpawnData Data { get { return _UseDebugData ? _debugData : _data; } private set { _data = value; } }
+
+    int CurrentHits;
 
     Rigidbody2D rigidbodyS;
     void Awake()
@@ -26,13 +30,16 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         rigidbodyS.velocity = Vector2.zero;
         var random = Random.Range(1, 100);
         transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * random  : Vector3.one * -555 * random;
+        gameObject.SetActive(false);
     }
 
     public void RestartAlive(Vector2 newPos, Vector2 dir)
     {
+
+        gameObject.SetActive(true);
         transform.position = newPos;
         // reset the health to be full health
-        _data.CurrentHits = 0;
+        CurrentHits = 0;
         //_data.MovementDirection = dir;
         rigidbodyS.velocity = Data.Speed * dir;
     }
@@ -44,7 +51,8 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
 
     public void GetHit()
     {
-        _data.CurrentHits += 1;
-        if (Data.CurrentHits == Data.HitsToDie) Die();
+        CurrentHits += 1;
+        Debug.Log(name + ": Got damage " + CurrentHits);
+        if (CurrentHits >= Data.HitsToDie) Die();
     }
 }

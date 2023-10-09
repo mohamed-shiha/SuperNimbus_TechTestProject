@@ -7,6 +7,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public SpawnManager SpawnManager;
+    public int LevelReward;
+
+    public void RewardPlayer(int reward)
+    {
+        LevelReward += reward;
+    }
+
     public Action<WorldObject> OnObjectDeath;
 
     private void Awake()
@@ -38,7 +45,13 @@ public class GameManager : MonoBehaviour
         {
             var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             pos.z = 0;
-            SpawnManager.SpawnBullet(pos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1)); 
+            SpawnManager.SpawnBullet(pos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1, 1)); 
         }
+    }
+
+    public void Fire(Vector3 spawnPos)
+    {
+        //var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        SpawnManager.SpawnBullet(spawnPos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1, 1));
     }
 }
