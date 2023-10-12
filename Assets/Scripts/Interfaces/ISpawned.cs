@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum ObjectType
@@ -8,6 +9,7 @@ public enum ObjectType
     Tower
 }
 
+[Serializable]
 public struct SpawnData
 {
     public int ID;
@@ -15,8 +17,14 @@ public struct SpawnData
     public ObjectType Type;
     public string Name;
     public int HitsToDie;
-    public int RewardPerKill;
+    public bool RandomReward;
+    [SerializeField]int _RewardPerKill;
     public int CurrentHits;
+
+    public int GetRewardPerKill()
+    {
+        return RandomReward ? UnityEngine.Random.Range(1, _RewardPerKill) : _RewardPerKill;
+    }
 
     //public Vector2 MovementDirection;
 
@@ -28,9 +36,13 @@ public struct SpawnData
         Name = name;
         HitsToDie = hitsToDie;
         CurrentHits = 0;
-        RewardPerKill = rewardPerKill;
+        _RewardPerKill = rewardPerKill;
+        RandomReward = true;
         //MovementDirection = movementDirection;
     }
+
+
+
 }
 
 

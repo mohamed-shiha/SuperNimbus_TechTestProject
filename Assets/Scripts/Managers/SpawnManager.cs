@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -6,9 +7,8 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField] WorldObject[] Prefabs;
-    ObjectsSpawner<NormalBullet> bulletSpawner;
-    ObjectsSpawner<TowerController> enemySpawner;
-    ObjectsSpawner<EnemyController> towersSpawner;
+    ObjectsQueueSpawner<NormalBullet> bulletSpawner;
+    ObjectsListSpawner<EnemyController> enemySpawner;
 
     #region Debug
     [SerializeField] bool _Debug;
@@ -17,10 +17,8 @@ public class SpawnManager : MonoBehaviour
 
     public void Initialize()
     {
-        bulletSpawner = new ObjectsSpawner<NormalBullet>((i) => MakeObject<NormalBullet>(i));
-        enemySpawner = new ObjectsSpawner<TowerController>((i) => MakeObject<TowerController>(i));
-        towersSpawner = new ObjectsSpawner<EnemyController>((i) => MakeObject<EnemyController>(i));
-
+        bulletSpawner = new ObjectsQueueSpawner<NormalBullet>((i) => MakeObject<NormalBullet>(i));
+        enemySpawner = new ObjectsListSpawner<EnemyController>((i) => MakeObject<EnemyController>(i));
     }
 
     public void SpawnBullet(Vector2 pos, SpawnData data)
@@ -31,17 +29,18 @@ public class SpawnManager : MonoBehaviour
         DebugUpdateText();
     }
 
-    public void SpawnEnemy(Vector2 pos, SpawnData data)
+    public void SpawnEnemy(int id, Vector2 pos, SpawnData data)
     {
-        var enemy = enemySpawner.GiveMeOne();
+        var enemy = enemySpawner.GetByID(id);
         enemy.SetData(data);
         enemy.RestartAlive(pos, Vector2.left);
         DebugUpdateText();
     }
 
-    internal T MakeObject<T>(int id = 0) where T : WorldObject
+
+    internal T MakeObject<T>(int id) where T : WorldObject
     {
-        T prefabe = Prefabs.OfType<T>().First();
+        T prefabe = Prefabs.OfType<T>().First(obj => obj.ID == id);
         T result;
         if (prefabe == null)
         {
@@ -61,17 +60,12 @@ public class SpawnManager : MonoBehaviour
             return;
         }
 
-        if (returnedObject is TowerController enemy)
+        if (returnedObject is EnemyController enemy)
         {
             enemySpawner.TakeBack(enemy);
             return;
         }
 
-        if (returnedObject is EnemyController tower)
-        {
-            towersSpawner.TakeBack(tower);
-            return;
-        }
     }
 
     private void DebugUpdateText()
@@ -80,7 +74,6 @@ public class SpawnManager : MonoBehaviour
 
         Debugtext.text = string.Format(
             $"bullet: {bulletSpawner.counter}\n" +
-            $"towers: {towersSpawner.counter}\n" +
             $"enemy: {enemySpawner.counter}\n"
             );
     }

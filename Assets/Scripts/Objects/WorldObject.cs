@@ -2,16 +2,18 @@
 
 public abstract class WorldObject : MonoBehaviour, ISpawned
 {
-
+    public int ID;
     public ObjectType GetHitFrom;
+
     [SerializeField] bool _UseDebugData;
+
+    int CurrentHits;
+    Rigidbody2D rigidbodyS;
     SpawnData _data;
     SpawnData _debugData = new SpawnData(0, 1, ObjectType.NA, "MockData", 3, 1);
     public SpawnData Data { get { return _UseDebugData ? _debugData : _data; } private set { _data = value; } }
 
-    int CurrentHits;
 
-    Rigidbody2D rigidbodyS;
     void Awake()
     {
         rigidbodyS = GetComponent<Rigidbody2D>();
@@ -33,7 +35,7 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         gameObject.SetActive(false);
     }
 
-    public void RestartAlive(Vector2 newPos, Vector2 dir)
+    public virtual void RestartAlive(Vector2 newPos, Vector2 dir)
     {
 
         gameObject.SetActive(true);
@@ -44,9 +46,10 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         rigidbodyS.velocity = Data.Speed * dir;
     }
 
-    public void SetData(SpawnData spawnData)
+    public virtual void SetData(SpawnData spawnData)
     {
         Data = spawnData;
+        ID = Data.ID;
     }
 
     public void GetHit()

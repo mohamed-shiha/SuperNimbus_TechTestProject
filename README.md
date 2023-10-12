@@ -23,7 +23,29 @@
    - int RewardPerKill: 3
    - float Speed: 0.3 
 4. Lucky Cho
-   - int ID: 2
+   - int ID: 3
    - string Name: "Lucky Cho"
    - int RewardPerKill: 1-5 (random)
    - float Speed: 0.7 
+
+## Attacker Data
+1. Butter Flast
+   - int ID: 6
+   - string Name: "Butter Flast"
+   - float Speed: 5
+   - int hitsToDie: 3
+2. Toph Bluf
+   - int ID: 7
+   - string Name: "Toph Bluf"
+   - float Speed: 2
+   - int hitsToDie: 8
+3. Pot Bot
+   - int ID: 8
+   - string Name: "Toph Bluf"
+   - float Speed: 4
+   - int hitsToDie: 5
+3. Tank Hank
+   - int ID: 9
+   - string Name: "Tank Hank"
+   - float Speed: 3
+   - int hitsToDie: 10
