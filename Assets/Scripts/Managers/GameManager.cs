@@ -13,11 +13,11 @@ public class GameManager : MonoBehaviour
     Transform[] EnemySpawnPoints;
     public Action<WorldObject> OnObjectDeath;
     public Action<Level> OnGameStarted;
+    public Action<int> OnTowerSelected;
+    public Player player;
 
-
-    private void Awake()
+    private void OnEnable()
     {
-
         if (Instance == null)
         {
             Instance = this;
@@ -27,21 +27,20 @@ public class GameManager : MonoBehaviour
             OnObjectDeath += OnObjectDeathCall;
             OnGameStarted += OnGameStartedCall;
             EnemySpawnPoints = Camera.main.transform.GetChild(0).GetComponentsInChildren<Transform>();
+            player.gameObject.SetActive(true);
             // test 
-            OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6 , 7, 8, 9, 6 , 7, 8, 9, 6 , 7, 8, 9, 6 , 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
+            OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
         }
         else
         {
             Destroy(this.gameObject);
         }
-
     }
 
     void OnGameStartedCall(Level level)
     {
         CurrentLevel = level;
         SpawnEnemy();
-        
     }
 
     public void RewardPlayer(int reward)
@@ -60,16 +59,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonUp(0))
-        {
-            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            pos.z = 0;
-            SpawnManager.SpawnBullet(pos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1, 1));
-        }
-    }
-
     public void Fire(Vector3 spawnPos)
     {
         SpawnManager.SpawnBullet(spawnPos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1, 1));
@@ -83,9 +72,17 @@ public class GameManager : MonoBehaviour
             return;
         }
         int id = CurrentLevel.GetAndMove();
-        Vector2 pos = EnemySpawnPoints[UnityEngine.Random.Range(0, EnemySpawnPoints.Length - 1)].position;
+        var point = EnemySpawnPoints[UnityEngine.Random.Range(1, EnemySpawnPoints.Length)];
+        Debug.Log($"spawning {Data[ObjectType.Enemy, id].Name} on {point.name}");
+        var pos=  point.position;
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
         //Invoke("SpawnEnemy", CurrentLevel.SpawnSpeed);
+    }
+
+    public void SpawnTower(int id, Vector3 pos)
+    {
+        var data = Data[ObjectType.Tower, id];
+        SpawnManager.SpawnTower(id, pos, data);
     }
 }

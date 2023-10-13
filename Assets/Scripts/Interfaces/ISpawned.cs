@@ -18,12 +18,12 @@ public struct SpawnData
     public string Name;
     public int HitsToDie;
     public bool RandomReward;
-    [SerializeField]int _RewardPerKill;
+    int RewardPerKill;
     public int CurrentHits;
 
     public int GetRewardPerKill()
     {
-        return RandomReward ? UnityEngine.Random.Range(1, _RewardPerKill) : _RewardPerKill;
+        return RandomReward ? UnityEngine.Random.Range(1, RewardPerKill) : RewardPerKill;
     }
 
     //public Vector2 MovementDirection;
@@ -36,7 +36,7 @@ public struct SpawnData
         Name = name;
         HitsToDie = hitsToDie;
         CurrentHits = 0;
-        _RewardPerKill = rewardPerKill;
+        RewardPerKill = rewardPerKill;
         RandomReward = true;
         //MovementDirection = movementDirection;
     }

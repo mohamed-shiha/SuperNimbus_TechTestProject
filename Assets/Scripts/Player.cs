@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -16,25 +14,39 @@ public class Player : MonoBehaviour
     public GameObject HighlightSprite;
     public GameObject tower;
     public MouseMode mouseMode;
+    int selectedTowerID;
+
+    private void Awake()
+    {
+        GameManager.Instance.OnTowerSelected += TowerSelected;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnTowerSelected -= TowerSelected;
+    }
 
     private void Update()
     {
         switch (mouseMode)
         {
-            case MouseMode.Select:
-                // 
-                break;
             case MouseMode.Check:
+                if (Input.GetMouseButtonUp(1))
+                {
+                    mouseMode = MouseMode.Select;
+                    HighlightSprite.transform.position = Vector3.one * 1111;
+                    break;
+                }
                 var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 var cellPos = buildTiles.WorldToCell(mousePos);
-                var cen = buildTiles.GetCellCenterWorld(cellPos);
+                var cellCenter = buildTiles.GetCellCenterWorld(cellPos);
                 if (buildTiles.GetColliderType(cellPos) == Tile.ColliderType.Sprite)
                 {
-                    HighlightSprite.transform.position = cen;
+                    HighlightSprite.transform.position = cellCenter;
                     if (Input.GetMouseButtonUp(0))
                     {
                         buildTiles.SetColliderType(cellPos, Tile.ColliderType.None);
-                        Instantiate(tower, cen, Quaternion.identity);
+                        GameManager.Instance.SpawnTower(selectedTowerID, cellCenter);
                     }
                 }
                 else
@@ -42,9 +54,13 @@ public class Player : MonoBehaviour
                     HighlightSprite.transform.position = Vector3.one * 1111;
                 }
                 break;
-            default:
-                break;
         }
         
+    }
+
+    private void TowerSelected(int newID)
+    {
+        selectedTowerID = newID;
+        mouseMode = MouseMode.Check;
     }
 }

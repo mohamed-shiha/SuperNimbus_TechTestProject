@@ -7,7 +7,7 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
 
     [SerializeField] bool _UseDebugData;
 
-    int CurrentHits;
+    protected int CurrentHits;
     Rigidbody2D rigidbodyS;
     SpawnData _data;
     SpawnData _debugData = new SpawnData(0, 1, ObjectType.NA, "MockData", 3, 1);

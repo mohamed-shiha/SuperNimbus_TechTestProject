@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 2737624381978515258}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.604001, y: 1.1469998, z: 0}
+  m_LocalPosition: {x: -1.476, y: 0.439, z: 0}
   m_LocalScale: {x: 0.23102, y: 0.23102, z: 0.23102}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -110,8 +110,8 @@ Transform:
   m_GameObject: {fileID: 4075088859587148862}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.7370012, y: 0.64399976, z: 0.014460309}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.37600052, y: -0.12999994, z: 0.014460309}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3125647524375382238}
@@ -278,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 5834238539837860978}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.0025224818, w: 0.99999684}
-  m_LocalPosition: {x: -0.961, y: 0.67, z: 0.01446031}
+  m_LocalPosition: {x: 0.167, y: -0.038, z: 0.014460309}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -364,8 +364,8 @@ Transform:
   m_GameObject: {fileID: 5840086638546675791}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.9820012, y: 0.65499973, z: 0.014460309}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.131, y: -0.119, z: 0.014460309}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3125647524375382238}
@@ -534,7 +534,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.4571414, y: -2.9891036, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1891446668831663328}
@@ -578,5 +578,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   GetHitFrom: 2
-  _UseDebugData: 1
+  _UseDebugData: 0
   FirePoint: {fileID: 6898251241887822840}

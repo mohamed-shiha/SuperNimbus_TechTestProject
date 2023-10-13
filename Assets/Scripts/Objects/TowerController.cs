@@ -5,10 +5,10 @@ public class TowerController : WorldObject
     [SerializeField] Transform FirePoint;
     Animator animator;
 
-    private void Start()
+    private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
-        SetData(new SpawnData(0, Random.Range(0.1f, 1), ObjectType.Bullet, "Defender", 0, 1));
+        //SetData(new SpawnData(0, Random.Range(0.1f, 1), ObjectType.Bullet, "Defender", 0, 1));
     }
 
     public override void SetData(SpawnData spawnData)
@@ -28,5 +28,13 @@ public class TowerController : WorldObject
     public void Fire()
     {
         GameManager.Instance.Fire(FirePoint.position);
+    }
+
+    public override void RestartAlive(Vector2 newPos, Vector2 dir)
+    {
+        gameObject.SetActive(true);
+        transform.position = newPos;
+        // reset the health to be full health
+        CurrentHits = 0;
     }
 }

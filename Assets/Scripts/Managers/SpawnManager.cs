@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -9,6 +7,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] WorldObject[] Prefabs;
     ObjectsQueueSpawner<NormalBullet> bulletSpawner;
     ObjectsListSpawner<EnemyController> enemySpawner;
+    ObjectsListSpawner<TowerController> towerSpawner;
 
     #region Debug
     [SerializeField] bool _Debug;
@@ -19,6 +18,7 @@ public class SpawnManager : MonoBehaviour
     {
         bulletSpawner = new ObjectsQueueSpawner<NormalBullet>((i) => MakeObject<NormalBullet>(i));
         enemySpawner = new ObjectsListSpawner<EnemyController>((i) => MakeObject<EnemyController>(i));
+        towerSpawner = new ObjectsListSpawner<TowerController>((i) => MakeObject<TowerController>(i));
     }
 
     public void SpawnBullet(Vector2 pos, SpawnData data)
@@ -34,6 +34,14 @@ public class SpawnManager : MonoBehaviour
         var enemy = enemySpawner.GetByID(id);
         enemy.SetData(data);
         enemy.RestartAlive(pos, Vector2.left);
+        DebugUpdateText();
+    }
+
+    public void SpawnTower(int id, Vector2 pos, SpawnData data)
+    {
+        var tower = towerSpawner.GetByID(id);
+        tower.SetData(data);
+        tower.RestartAlive(pos, Vector2.zero);
         DebugUpdateText();
     }
 
@@ -63,6 +71,12 @@ public class SpawnManager : MonoBehaviour
         if (returnedObject is EnemyController enemy)
         {
             enemySpawner.TakeBack(enemy);
+            return;
+        }
+
+        if (returnedObject is TowerController tower)
+        {
+            towerSpawner.TakeBack(tower);
             return;
         }
 

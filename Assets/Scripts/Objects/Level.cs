@@ -4,9 +4,16 @@ public class Level
 
     int[] SpawnOrder;
     int currentEnemy;
+    int StartingGold;
 
     public float SpawnSpeed;
     public int EnemyCount => SpawnOrder.Length;
+
+    public Level(int[] spawnOrder, int startingGold)
+    {
+        SpawnOrder = spawnOrder;
+        StartingGold = startingGold;
+    }
 
     public Level(int[] spawnOrder)
     {
@@ -22,9 +29,4 @@ public class Level
     {
         return currentEnemy < SpawnOrder.Length;
     }
-}
-
-public class Tower
-{
-    SpawnData Data;
 }
