@@ -27,7 +27,8 @@ public class TowerController : WorldObject
 
     public void Fire()
     {
-        GameManager.Instance.Fire(FirePoint.position);
+        Data.ResetReward();
+        GameManager.Instance.Fire(FirePoint.position, Data);
     }
 
     public override void RestartAlive(Vector2 newPos, Vector2 dir)

@@ -15,10 +15,11 @@ public class TowerButton : MonoBehaviour
         Button.onClick.AddListener(() => OnSelected());
     }
 
-    public void SetData(int id, int cost)
+    public void SetData(int id, int cost, Sprite icon)
     {
         ID = id;
         Cost = cost;
+        TowerIcon.sprite = icon;
     }
 
     public void OnSelected()

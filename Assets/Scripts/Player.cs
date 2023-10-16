@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,11 +12,12 @@ public class Player : MonoBehaviour
         Check,
     }
 
-    public Tilemap buildTiles;
-    public GameObject HighlightSprite;
-    public GameObject tower;
-    public MouseMode mouseMode;
+    [SerializeField] Tilemap buildTiles;
+    [SerializeField] GameObject HighlightSprite;
+
+    MouseMode mouseMode;
     int selectedTowerID;
+    List<SpawnData> unlokedTowers;
 
     private void Awake()
     {
@@ -64,5 +67,15 @@ public class Player : MonoBehaviour
     {
         selectedTowerID = newID;
         mouseMode = MouseMode.Check;
+    }
+
+    public void OnTowerUnlocked(int id)
+    {
+        unlokedTowers.Add(GameManager.Instance.AllData[ObjectType.Tower, id]);
+    }
+
+    internal SpawnData[] GetUnlockedTowers()
+    {
+        return unlokedTowers.ToArray();
     }
 }

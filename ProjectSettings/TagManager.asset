@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: level Background
+    uniqueID: 1121295419
+    locked: 0
+  - name: level Forground
+    uniqueID: 883612011
+    locked: 0
+  - name: Objects
+    uniqueID: 257751693
+    locked: 0
+  - name: UI
+    uniqueID: 1677674687
+    locked: 0
+  - name: Highlight
+    uniqueID: 3869447211
+    locked: 0

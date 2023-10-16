@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TowerIcon: {fileID: 9081037274995188259}
+  ID: 0
 --- !u!1 &8528047808674264569
 GameObject:
   m_ObjectHideFlags: 0

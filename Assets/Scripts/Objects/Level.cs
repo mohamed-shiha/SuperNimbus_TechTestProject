@@ -22,6 +22,10 @@ public class Level
 
     public int GetAndMove()
     {
+        if(currentEnemy >= SpawnOrder.Length)
+        {
+            currentEnemy = 0;
+        }
         return SpawnOrder[currentEnemy++];
     }
 

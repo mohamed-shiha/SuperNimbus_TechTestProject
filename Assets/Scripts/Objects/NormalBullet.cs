@@ -12,8 +12,8 @@ public class NormalBullet : WorldObject
             if (other.GetHitFrom == ObjectType.Bullet)
             {
                 Debug.Log("Dealing Damage " + other.Data.Name);
-                other.GetHit();
-                Die();
+                other.GetHit(Data);
+                Die(other.Data);
             }
         }
     }

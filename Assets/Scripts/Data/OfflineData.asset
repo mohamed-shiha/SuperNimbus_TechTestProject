@@ -14,67 +14,83 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Enemies:
   - ID: 6
-    Speed: 5
+    Speed: 4
     Type: 2
     Name: ButterFlast
     HitsToDie: 1
-    RandomReward: 0
-    _RewardPerKill: 0
+    IsRandomReward: 0
+    RewardPerKill: 0
     CurrentHits: 0
+    Value: 0
+    Icon: {fileID: 0}
   - ID: 7
-    Speed: 2
+    Speed: 1.5
     Type: 2
     Name: Toph Bluf
     HitsToDie: 8
-    RandomReward: 0
-    _RewardPerKill: 0
+    IsRandomReward: 0
+    RewardPerKill: 0
     CurrentHits: 0
+    Value: 0
+    Icon: {fileID: 0}
   - ID: 8
-    Speed: 4
+    Speed: 2.5
     Type: 2
     Name: Pot Bot
     HitsToDie: 5
-    RandomReward: 0
-    _RewardPerKill: 0
+    IsRandomReward: 0
+    RewardPerKill: 0
     CurrentHits: 0
+    Value: 0
+    Icon: {fileID: 0}
   - ID: 9
-    Speed: 3
+    Speed: 1.5
     Type: 2
     Name: Tank Hank
     HitsToDie: 10
-    RandomReward: 0
-    _RewardPerKill: 0
+    IsRandomReward: 0
+    RewardPerKill: 0
     CurrentHits: 0
+    Value: 0
+    Icon: {fileID: 0}
   Towers:
   - ID: 0
     Speed: 1
     Type: 3
     Name: FastCast
     HitsToDie: 5
-    RandomReward: 0
-    _RewardPerKill: 1
+    IsRandomReward: 0
+    RewardPerKill: 1
     CurrentHits: 0
+    Value: 3
+    Icon: {fileID: -790328767, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
   - ID: 1
     Speed: 0.5
     Type: 3
     Name: Plup Flop
     HitsToDie: 5
-    RandomReward: 0
-    _RewardPerKill: 1
+    IsRandomReward: 0
+    RewardPerKill: 2
     CurrentHits: 0
+    Value: 20
+    Icon: {fileID: 224941661, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
   - ID: 2
     Speed: 0.3
     Type: 3
     Name: Slow Bo
     HitsToDie: 5
-    RandomReward: 0
-    _RewardPerKill: 3
+    IsRandomReward: 0
+    RewardPerKill: 3
     CurrentHits: 0
+    Value: 30
+    Icon: {fileID: 511124573, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
   - ID: 3
-    Speed: 0.7
+    Speed: 0.1
     Type: 3
     Name: Lucky Cho
     HitsToDie: 5
-    RandomReward: 1
-    _RewardPerKill: 0
+    IsRandomReward: 0
+    RewardPerKill: 10
     CurrentHits: 0
+    Value: 100
+    Icon: {fileID: 1813969021, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 
 public enum ObjectType
@@ -17,18 +18,30 @@ public struct SpawnData
     public ObjectType Type;
     public string Name;
     public int HitsToDie;
-    public bool RandomReward;
-    int RewardPerKill;
+    public bool IsRandomReward;
+    [SerializeField] int RewardPerKill;
     public int CurrentHits;
+    public int Value;
+    public Sprite Icon;
+
+    int randomReward;
 
     public int GetRewardPerKill()
     {
-        return RandomReward ? UnityEngine.Random.Range(1, RewardPerKill) : RewardPerKill;
+        if(IsRandomReward && randomReward == -99)
+        {
+            ResetReward();
+        }
+        return IsRandomReward ? randomReward : RewardPerKill;
     }
 
+    public void ResetReward()
+    {
+        randomReward = UnityEngine.Random.Range(1, RewardPerKill + 1);
+    }
     //public Vector2 MovementDirection;
 
-    public SpawnData(int iD, float speed, ObjectType type, string name, int hitsToDie, int rewardPerKill/*, Vector2 movementDirection*/)
+    public SpawnData(int iD, float speed, ObjectType type, string name, int hitsToDie, int rewardPerKill, int cost = 0, Sprite icon = null)
     {
         ID = iD;
         Speed = speed;
@@ -37,8 +50,10 @@ public struct SpawnData
         HitsToDie = hitsToDie;
         CurrentHits = 0;
         RewardPerKill = rewardPerKill;
-        RandomReward = true;
-        //MovementDirection = movementDirection;
+        IsRandomReward = true;
+        Value = cost;
+        Icon = icon;
+        randomReward = -99;
     }
 
 
@@ -50,5 +65,5 @@ public interface ISpawned
 {
     public void SetData(SpawnData spawnData);
     public void RestartAlive(Vector2 SpawnPos, Vector2 dir);
-    public void Die();
+    public void Die(SpawnData killer);
 }

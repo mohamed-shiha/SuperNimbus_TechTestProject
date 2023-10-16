@@ -55,7 +55,7 @@ public class ObjectsQueueSpawner<T> where T : WorldObject
         MakeObject = makeObject;
     }
 
-    public T GiveMeOne()
+    public T GiveMeOne(int id = 0)
     {
         T result;
         if (pool.Count > 0)
@@ -65,7 +65,7 @@ public class ObjectsQueueSpawner<T> where T : WorldObject
         else
         {
             counter++;
-            return MakeObject(-1);
+            return MakeObject(id);
         }
 
         return result;

@@ -7,14 +7,21 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] SpawnManager SpawnManager;
     [SerializeField] GameData Data;
+    [SerializeField] bool UseOfflineData;
+    [SerializeField] bool KeepSpawning;
+
     int LevelReward;
     int Kills;
     Level CurrentLevel;
     Transform[] EnemySpawnPoints;
-    public Action<WorldObject> OnObjectDeath;
+    public Action<WorldObject, SpawnData> OnObjectDeath;
     public Action<Level> OnGameStarted;
     public Action<int> OnTowerSelected;
+    public Action<int> OnTowerUnlocked;
     public Player player;
+
+    public GameData AllData { get { return Data; } }
+
 
     private void OnEnable()
     {
@@ -48,25 +55,25 @@ public class GameManager : MonoBehaviour
         LevelReward += reward;
     }
 
-    private void OnObjectDeathCall(WorldObject obj)
+    private void OnObjectDeathCall(WorldObject obj, SpawnData killData)
     {
         SpawnManager.TakeBackObject(obj);
         if (obj is EnemyController enemy)
         {
             Kills++;
             SpawnEnemy();
-            RewardPlayer(enemy.Data.GetRewardPerKill());
+            SpawnManager.SpawnRewardUI(obj.transform.position, killData);
         }
     }
 
-    public void Fire(Vector3 spawnPos)
+    public void Fire(Vector3 spawnPos, SpawnData data)
     {
-        SpawnManager.SpawnBullet(spawnPos, new SpawnData(0, 1, ObjectType.Bullet, "bullet", 1, 1));
+        SpawnManager.SpawnBullet(spawnPos, new SpawnData(-1, 1, ObjectType.Bullet, "bullet - "+data.Name, 1, data.GetRewardPerKill()));
     }
 
     public void SpawnEnemy()
     {
-        if (!CurrentLevel.HasNext())
+        if (!CurrentLevel.HasNext() && !KeepSpawning)
         {
             Debug.Log("Spawn Queue Finished");
             return;
@@ -85,4 +92,11 @@ public class GameManager : MonoBehaviour
         var data = Data[ObjectType.Tower, id];
         SpawnManager.SpawnTower(id, pos, data);
     }
+
+    public SpawnData[] GetPlayerUnlockedTowers()
+    {
+        var result = UseOfflineData ? Data.Towers : player.GetUnlockedTowers();
+        return result;
+    }
+
 }

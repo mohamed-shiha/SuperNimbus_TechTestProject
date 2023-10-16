@@ -8,7 +8,7 @@ public class KillZone : MonoBehaviour
         WorldObject other = collision.GetComponent<WorldObject>();
         if (other != null)
         {
-            other.Die();
+            other.Die(new SpawnData());
         }
     }
 }

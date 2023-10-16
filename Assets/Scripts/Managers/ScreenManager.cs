@@ -21,6 +21,7 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Transform PlayerTowersParent;
     [SerializeField] TextMeshProUGUI UserNameInput;
     [SerializeField] TextMeshProUGUI PasswordInput;
+    [SerializeField] TowerButton TowerButtonPrefab;
 
     Transform currentScreen;
     Transform preiviousScreen;
@@ -52,14 +53,21 @@ public class ScreenManager : MonoBehaviour
 
     public void StartGame()
     {
+        // spawn buttons
+        foreach (SpawnData item in GameManager.Instance.GetPlayerUnlockedTowers())
+        {
+            Instantiate(TowerButtonPrefab, PlayerTowersParent).SetData(item.ID, item.Value, item.Icon);
+        }
+        // switch screens
         menusParent.gameObject.SetActive(false);
         GoToScreen(ScreensTitles.Gameplay);
+        // start the game
         GameManager.Instance.OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
     }
 
     public void OnBack()
     {
-        if(preiviousScreen == currentScreen)
+        if (preiviousScreen == currentScreen)
         {
             return;
         }
@@ -80,7 +88,7 @@ public class Screens
         allScreens = new Transform[Enum.GetValues(typeof(ScreensTitles)).Length];
     }
 
-    public Transform this [ScreensTitles screenTitle]
+    public Transform this[ScreensTitles screenTitle]
     {
         get
         {
@@ -93,5 +101,5 @@ public class Screens
         }
     }
 
-  
+
 }

@@ -19,17 +19,17 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         rigidbodyS = GetComponent<Rigidbody2D>();
     }
 
-    public virtual void OnDeath()
+    public virtual void OnDeath(SpawnData killer)
     {
-        Debug.Log(string.Format($"The object with the ID: {Data.ID} Triggered OnDeath"));
-        GameManager.Instance.OnObjectDeath(this);
+        //Debug.Log($"The object with the ID: {Data.ID} Triggered OnDeath");
+        GameManager.Instance.OnObjectDeath(this, killer);
     }
 
-    public void Die()
+    public void Die(SpawnData killerData)
     {
         // on any object death it will get back to the objects queue and set it's position far from the screen.
-        OnDeath();
-        rigidbodyS.velocity = Vector2.zero;
+        OnDeath(killerData);
+        //rigidbodyS.velocity = Vector2.zero;
         var random = Random.Range(1, 100);
         transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * random  : Vector3.one * -555 * random;
         gameObject.SetActive(false);
@@ -52,10 +52,10 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         ID = Data.ID;
     }
 
-    public void GetHit()
+    public void GetHit(SpawnData hitFrom)
     {
         CurrentHits += 1;
         Debug.Log(name + ": Got damage " + CurrentHits);
-        if (CurrentHits >= Data.HitsToDie) Die();
+        if (CurrentHits >= Data.HitsToDie) Die(hitFrom);
     }
 }

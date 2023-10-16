@@ -2,11 +2,12 @@
 public class EnemyController : WorldObject
 {
 
-    public override void OnDeath()
+    public override void OnDeath(SpawnData killer)
     {
-        base.OnDeath();
+        base.OnDeath(killer);
         //give the player a reward
-        GameManager.Instance.RewardPlayer(Data.GetRewardPerKill());
+        GameManager.Instance.RewardPlayer(killer.GetRewardPerKill());
         //TODO:spawn decals
     }
+
 }
