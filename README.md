@@ -49,3 +49,10 @@
    - string Name: "Tank Hank"
    - float Speed: 3
    - int hitsToDie: 10
+
+## Assets Used
+
+- [Free 2D Impact FX](https://assetstore.unity.com/packages/vfx/particles/fire-explosions/free-2d-impact-fx-201222).
+- [2D Casual UI HD](https://assetstore.unity.com/packages/2d/gui/icons/2d-casual-ui-hd-82080).
+- [100 Fantasy Characters Mega Pack](https://assetstore.unity.com/packages/2d/characters/100-fantasy-characters-mega-pack-222143).
+- [Too Cube Forest, the free 2D platformer game tile set.](https://assetstore.unity.com/packages/2d/environments/too-cube-forest-the-free-2d-platformer-game-tile-set-117493).
