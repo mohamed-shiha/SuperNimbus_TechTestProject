@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
         GameManager.Instance.OnTowerSelected += TowerSelected;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameManager.Instance.OnTowerSelected -= TowerSelected;
     }
@@ -47,6 +47,8 @@ public class Player : MonoBehaviour
                     {
                         buildTiles.SetColliderType(cellPos, Tile.ColliderType.None);
                         GameManager.Instance.SpawnTower(selectedTowerID, cellCenter);
+                        mouseMode = MouseMode.Select;
+                        HighlightSprite.transform.position = Vector3.one * 1111;
                     }
                 }
                 else

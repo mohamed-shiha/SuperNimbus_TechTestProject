@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
             EnemySpawnPoints = Camera.main.transform.GetChild(0).GetComponentsInChildren<Transform>();
             player.gameObject.SetActive(true);
             // test 
-            OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
+            //OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
         }
         else
         {
