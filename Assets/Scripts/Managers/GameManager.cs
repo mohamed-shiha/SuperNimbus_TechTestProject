@@ -80,7 +80,6 @@ public class GameManager : MonoBehaviour
         }
         int id = CurrentLevel.GetAndMove();
         var point = EnemySpawnPoints[UnityEngine.Random.Range(1, EnemySpawnPoints.Length)];
-        Debug.Log($"spawning {Data[ObjectType.Enemy, id].Name} on {point.name}");
         var pos=  point.position;
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
@@ -99,4 +98,12 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
+    public void StartLevel(Level newLevel = null)
+    {
+        if(newLevel == null)
+        {
+            newLevel = new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f };
+        }
+        OnGameStarted(newLevel);
+    }
 }

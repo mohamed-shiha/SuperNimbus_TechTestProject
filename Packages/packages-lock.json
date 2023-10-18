@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.heroiclabs.nakama-unity": {
+      "version": "https://github.com/heroiclabs/nakama-unity.git?path=/Packages/Nakama#v3.9.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.unitywebrequest": "1.0.0"
+      },
+      "hash": "3e1d33231a6b70fdc086f0e03d98b73ee54b2511"
+    },
     "com.unity.2d.animation": {
       "version": "9.0.3",
       "depth": 1,

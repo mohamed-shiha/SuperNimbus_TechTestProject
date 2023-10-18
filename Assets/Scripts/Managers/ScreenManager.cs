@@ -61,13 +61,14 @@ public class ScreenManager : MonoBehaviour
         // switch screens
         menusParent.gameObject.SetActive(false);
         GoToScreen(ScreensTitles.Gameplay);
-        // start the game
-        GameManager.Instance.OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
+        // start the game 
+        // TODO: need to make sure a level is selected for now use a debug level
+        GameManager.Instance.StartLevel(null);
     }
 
     public void OnBack()
     {
-        if (preiviousScreen == currentScreen)
+        if (preiviousScreen == null || preiviousScreen == currentScreen)
         {
             return;
         }
@@ -100,6 +101,4 @@ public class Screens
             allScreens[(int)screenTitle] = value;
         }
     }
-
-
 }
