@@ -58,17 +58,21 @@ public class GameManager : MonoBehaviour
     private void OnObjectDeathCall(WorldObject obj, SpawnData killData)
     {
         SpawnManager.TakeBackObject(obj);
+        Debug.Log($"{obj.Data.Name} is killed by: {killData.Name}");
         if (obj is EnemyController enemy)
         {
-            Kills++;
+            if (killData.Name != "KillZone")
+            {
+                Kills++;
+                SpawnManager.SpawnRewardUI(obj.transform.position, killData);
+            }
             SpawnEnemy();
-            SpawnManager.SpawnRewardUI(obj.transform.position, killData);
         }
     }
 
     public void Fire(Vector3 spawnPos, SpawnData data)
     {
-        SpawnManager.SpawnBullet(spawnPos, new SpawnData(-1, 1, ObjectType.Bullet, "bullet - "+data.Name, 1, data.GetRewardPerKill()));
+        SpawnManager.SpawnBullet(spawnPos, new SpawnData(-1, 1, ObjectType.Bullet, "bullet - " + data.Name, 1, data.GetRewardPerKill()));
     }
 
     public void SpawnEnemy()
@@ -80,7 +84,7 @@ public class GameManager : MonoBehaviour
         }
         int id = CurrentLevel.GetAndMove();
         var point = EnemySpawnPoints[UnityEngine.Random.Range(1, EnemySpawnPoints.Length)];
-        var pos=  point.position;
+        var pos = point.position;
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
         //Invoke("SpawnEnemy", CurrentLevel.SpawnSpeed);
@@ -100,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     public void StartLevel(Level newLevel = null)
     {
-        if(newLevel == null)
+        if (newLevel == null)
         {
             newLevel = new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f };
         }

@@ -1,36 +1,72 @@
-using JetBrains.Annotations;
 using Nakama;
 using Nakama.TinyJson;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class ConnectionManager : MonoBehaviour
 {
+    public static ConnectionManager Instance { get; private set; }
+
     [SerializeField] string Scheme;
     [SerializeField] string HostName;
     [SerializeField] int Port;
     [SerializeField] string ServerKey;
+    [SerializeField] bool PlayOffLine;
 
     IClient client;
     ISession session;
     ISocket socket;
 
-    private async void Start()
+    public bool IsConnected => socket.IsConnected;
+    public Action OnConnected;
+    public Action OnConnectionFailed;
+    public Action OnStartOffLine;
+    
+
+    private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
+            if (!PlayOffLine)
+            {
+                StartCoroutine("Connect");
+            }
+            else
+            {
+                OnStartOffLine?.Invoke();
+            }
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
+    private async void Connect()
+    {
+        // create the client
         client = new Client(Scheme, HostName, Port, ServerKey, UnityWebRequestAdapter.Instance);
+        // authenticate the device
         await AuthenticateWithDevice();
-        //socket = client.NewSocket();
+        // create the socket and connect it
         socket = Socket.From(client);
         await socket.ConnectAsync(session, true);
-
-        //Debug.Log(session);
-        //Debug.Log(socket);
-
-        // i am now connected 
-        await TestingStoringData();
-        await TestingReadingData();
+        // notify the subscribers about the connection status
+        if (IsConnected)
+        {
+            OnConnected?.Invoke();
+        }
+        else
+        {
+            OnConnectionFailed?.Invoke();
+        }
     }
+
+
 
     public async Task AuthenticateWithDevice()
     {
@@ -50,7 +86,7 @@ public class ConnectionManager : MonoBehaviour
         try
         {
             session = await client.AuthenticateDeviceAsync(deviceId);
-            Debug.Log("Authenticated with Device ID\n " + deviceId);
+            Debug.Log($"Authenticated with Device ID: {deviceId}");
         }
         catch (ApiResponseException ex)
         {
@@ -60,60 +96,39 @@ public class ConnectionManager : MonoBehaviour
     }
 
 
-    public class TowersStorageObject
+    async Task StoreObjectsToNakama<T>(T[] objectsToSend, string collection, string key)
     {
-        public int[] UnlockedIDs;
-    }
-
-    async Task TestingStoringData()
-    {
-
-
-        var storageObject = new TowersStorageObject
+        // created storage object from the data
+        var storageObject = new StorageObject<T>
         {
-            UnlockedIDs = GameManager.Instance.AllData.Towers.Select(i => i.ID).ToArray()
+            StoreObjects = objectsToSend
         };
+
+        // concert the data to Json
         var unlockedIDs = JsonWriter.ToJson(storageObject);
-        Debug.Log("unlockedIDs: " + unlockedIDs);
+
+        // send the data to Nakama
         await client.WriteStorageObjectsAsync(session, new[]
         {
-            new WriteStorageObject
-            {
-                Collection = "UnlockedTowers",
-                Key = "towers",
-                //Value = " 7,8,9,6,7,8,9,6,7,8,9,6,7,8,9,6,7,8,9,6,7,8,9,6 "
-                Value = unlockedIDs,
-                PermissionRead = 1,
-                PermissionWrite = 1
-            },
+                new WriteStorageObject
+                {
+                    Collection = collection,
+                    Key = key,
+                    Value = unlockedIDs,
+                    PermissionRead = 1,
+                    PermissionWrite = 1
+                },
         });
-
-        Debug.Log("Stored");
     }
-
-    //async Task TestingReadingData()
-    //{
-
-    //    var result = await client.ReadStorageObjectsAsync(session, new[] {
-    //        new StorageObjectId
-    //        {
-    //            Collection = "UnlockedTowers",
-    //            Key = "towers",
-    //            UserId = session.UserId
-    //        }
-    //    });
-
-    //    Debug.Log("Read objects: [{0}]\n " + result.Objects);
-    //}
 
 
     async Task TestingReadingData()
     {
         try
         {
-            var result = await client.ReadStorageObjectsAsync(session, new[] 
+            var result = await client.ReadStorageObjectsAsync(session, new[]
             {
-                new StorageObjectId 
+                new StorageObjectId
                 {
                     Collection = "UnlockedTowers",
                     Key = "towers",
@@ -129,4 +144,9 @@ public class ConnectionManager : MonoBehaviour
         }
     }
 
+}
+
+public class StorageObject<T>
+{
+    public T[] StoreObjects;
 }

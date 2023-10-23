@@ -55,7 +55,6 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
     public void GetHit(SpawnData hitFrom)
     {
         CurrentHits += 1;
-        Debug.Log(name + ": Got damage " + CurrentHits);
         if (CurrentHits >= Data.HitsToDie) Die(hitFrom);
     }
 }
