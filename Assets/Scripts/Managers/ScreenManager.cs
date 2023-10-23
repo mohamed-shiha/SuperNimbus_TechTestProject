@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public enum ScreensTitles
@@ -22,6 +23,8 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Transform PlayerTowersParent;
     [SerializeField] TowerButton TowerSelectButtonPrefab;
     [SerializeField] TowerButton TowerUnlockButtonPrefab;
+    [SerializeField] TextMeshProUGUI GoldText;
+    [SerializeField] TextMeshProUGUI KillsText;
     [SerializeField] Animator animator;
 
     ScreenRef currentScreen;
@@ -38,12 +41,14 @@ public class ScreenManager : MonoBehaviour
         // subscribe to the connection events
         ConnectionManager.Instance.OnConnected += OnLoginOK;
         ConnectionManager.Instance.OnStartOffLine += OnLoginOK;
+        GameManager.Instance.OnPlayerRewarded += UpdatePlayerHud;
     }
 
     private void OnDestroy()
     {
         ConnectionManager.Instance.OnConnected -= OnLoginOK;
         ConnectionManager.Instance.OnStartOffLine -= OnLoginOK;
+        GameManager.Instance.OnPlayerRewarded -= UpdatePlayerHud;
     }
 
     // when we are connected or playing offline move to the main menu
@@ -93,14 +98,15 @@ public class ScreenManager : MonoBehaviour
             // spawn buttons
             foreach (SpawnData item in GameManager.Instance.GetPlayerUnlockedTowers())
             {
-                Instantiate(TowerSelectButtonPrefab, PlayerTowersParent).SetData(item.ID, item.Value, item.Icon);
+                Instantiate(TowerSelectButtonPrefab, PlayerTowersParent)
+                    .SetData(item.ID, item.Value, item.Icon);
             }
         }
         // switch screens
         GoToScreen(ScreensTitles.Gameplay);
         // start the game 
         // TODO: need to make sure a level is selected for now use a debug level
-        GameManager.Instance.StartLevel(null);
+        GameManager.Instance.StartLevel();
     }
 
     public void OnUnpauseAnimationEnd()
@@ -139,6 +145,11 @@ public class ScreenManager : MonoBehaviour
     {
         animator.SetTrigger("resume");
         afterPauseScreen = ScreensTitles.Main;
+    }
+
+    public void UpdatePlayerHud(int newTotal)
+    {
+        GoldText.text = newTotal.ToString();
     }
 }
 

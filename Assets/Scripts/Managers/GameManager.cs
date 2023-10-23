@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public Action<Level> OnGameStarted;
     public Action<int> OnTowerSelected;
     public Action<int> OnTowerUnlocked;
+    public Action<int> OnPlayerRewarded;
     public Player player;
 
     public GameData AllData { get { return Data; } }
@@ -63,11 +64,13 @@ public class GameManager : MonoBehaviour
         {
             if (killData.Name != "KillZone")
             {
-                Kills++;
                 SpawnManager.SpawnRewardUI(obj.transform.position, killData);
+                Kills++;
+                LevelReward += killData.GetRewardPerKill();
+                OnPlayerRewarded?.Invoke(LevelReward);
             }
-            SpawnEnemy();
         }
+        //SpawnEnemy();
     }
 
     public void Fire(Vector3 spawnPos, SpawnData data)
@@ -87,7 +90,7 @@ public class GameManager : MonoBehaviour
         var pos = point.position;
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
-        //Invoke("SpawnEnemy", CurrentLevel.SpawnSpeed);
+        Invoke("SpawnEnemy", CurrentLevel.SpawnSpeed);
     }
 
     public void SpawnTower(int id, Vector3 pos)

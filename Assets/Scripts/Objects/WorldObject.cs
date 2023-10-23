@@ -30,8 +30,8 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         // on any object death it will get back to the objects queue and set it's position far from the screen.
         OnDeath(killerData);
         //rigidbodyS.velocity = Vector2.zero;
-        var random = Random.Range(1, 100);
-        transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * random  : Vector3.one * -555 * random;
+        //var random = Random.Range(1, 100);
+        transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * Random.Range(1, 100) : Vector3.one * -555 * Random.Range(1, 100);
         gameObject.SetActive(false);
     }
 
