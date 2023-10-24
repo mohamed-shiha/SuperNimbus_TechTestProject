@@ -1,36 +1,42 @@
+using System;
+using UnityEngine;
 
+[Serializable]
 public class Level
 {
 
-    int[] SpawnOrder;
-    int currentEnemy;
+    [SerializeField] EnemyNames[] SpawnOrderType;
+    int currentEnemy = 0;
     int StartingGold;
 
     public float SpawnSpeed;
-    public int EnemyCount => SpawnOrder.Length;
+    public int EnemyCount => SpawnOrderType.Length;
 
-    public Level(int[] spawnOrder, int startingGold)
+    public Level(EnemyNames[] spawnOrderType, int startingGold, float spawnSpeed)
     {
-        SpawnOrder = spawnOrder;
+        SpawnOrderType = spawnOrderType;
         StartingGold = startingGold;
-    }
-
-    public Level(int[] spawnOrder)
-    {
-        SpawnOrder = spawnOrder;
+        SpawnSpeed = spawnSpeed;
+        currentEnemy = 0;
     }
 
     public int GetAndMove()
     {
-        if(currentEnemy >= SpawnOrder.Length)
+        if (currentEnemy >= SpawnOrderType.Length)
         {
             currentEnemy = 0;
         }
-        return SpawnOrder[currentEnemy++];
+        return (int)SpawnOrderType[currentEnemy++];
     }
 
     public bool HasNext()
     {
-        return currentEnemy < SpawnOrder.Length;
+        return currentEnemy < SpawnOrderType.Length;
+    }
+
+    internal Level GetCopy()
+    {
+        return new Level(SpawnOrderType,StartingGold,SpawnSpeed);
     }
 }
+

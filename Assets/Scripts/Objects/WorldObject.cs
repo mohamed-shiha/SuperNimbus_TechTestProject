@@ -21,7 +21,6 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
 
     public virtual void OnDeath(SpawnData killer)
     {
-        //Debug.Log($"The object with the ID: {Data.ID} Triggered OnDeath");
         GameManager.Instance.OnObjectDeath(this, killer);
     }
 
@@ -29,10 +28,13 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
     {
         // on any object death it will get back to the objects queue and set it's position far from the screen.
         OnDeath(killerData);
-        //rigidbodyS.velocity = Vector2.zero;
-        //var random = Random.Range(1, 100);
-        transform.position = Data.Type == ObjectType.Enemy ? Vector3.one * 555 * Random.Range(1, 100) : Vector3.one * -555 * Random.Range(1, 100);
+        transform.position = Data.Type == ObjectType.Enemy ? GetRandomVector() * -1 : GetRandomVector();
         gameObject.SetActive(false);
+    }
+
+    private Vector3 GetRandomVector()
+    {
+        return Random.Range(300, 1500) * Random.Range(1, 100) * Vector3.one;
     }
 
     public virtual void RestartAlive(Vector2 newPos, Vector2 dir)

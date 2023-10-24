@@ -42,6 +42,8 @@ public class ScreenManager : MonoBehaviour
         ConnectionManager.Instance.OnConnected += OnLoginOK;
         ConnectionManager.Instance.OnStartOffLine += OnLoginOK;
         GameManager.Instance.OnPlayerRewarded += UpdatePlayerHud;
+        GameManager.Instance.OnPlayerLivesChanged += UpdateLivesHud;
+
     }
 
     private void OnDestroy()
@@ -49,6 +51,14 @@ public class ScreenManager : MonoBehaviour
         ConnectionManager.Instance.OnConnected -= OnLoginOK;
         ConnectionManager.Instance.OnStartOffLine -= OnLoginOK;
         GameManager.Instance.OnPlayerRewarded -= UpdatePlayerHud;
+        GameManager.Instance.OnPlayerLivesChanged -= UpdateLivesHud;
+    }
+
+    private void UpdateLivesHud(int newLives)
+    {
+        // update the lives UI 
+        //tent screen
+        animator.SetTrigger("tentRed");
     }
 
     // when we are connected or playing offline move to the main menu
@@ -147,9 +157,10 @@ public class ScreenManager : MonoBehaviour
         afterPauseScreen = ScreensTitles.Main;
     }
 
-    public void UpdatePlayerHud(int newTotal)
+    public void UpdatePlayerHud(int goldTotal, int killsTotal)
     {
-        GoldText.text = newTotal.ToString();
+        GoldText.text = goldTotal.ToString();
+        KillsText.text = killsTotal.ToString();
     }
 }
 

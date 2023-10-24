@@ -7,6 +7,7 @@ public class GameData : ScriptableObject
 {
     public SpawnData[] Enemies;
     public SpawnData[] Towers;
+    public Level[] Levels;
 
     public SpawnData this[ObjectType type, int id]
     {

@@ -41,7 +41,7 @@
    - int hitsToDie: 8
 3. Pot Bot
    - int ID: 8
-   - string Name: "Toph Bluf"
+   - string Name: "Pot Bot"
    - float Speed: 4
    - int hitsToDie: 5
 3. Tank Hank

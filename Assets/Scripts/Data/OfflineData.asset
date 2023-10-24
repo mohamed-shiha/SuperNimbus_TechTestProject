@@ -73,7 +73,7 @@ MonoBehaviour:
     RewardPerKill: 2
     CurrentHits: 0
     Value: 20
-    Icon: {fileID: 224941661, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    Icon: {fileID: 511124573, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
   - ID: 2
     Speed: 0.3
     Type: 3
@@ -83,14 +83,17 @@ MonoBehaviour:
     RewardPerKill: 3
     CurrentHits: 0
     Value: 30
-    Icon: {fileID: 511124573, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    Icon: {fileID: 224941661, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
   - ID: 3
     Speed: 0.1
     Type: 3
     Name: Lucky Cho
     HitsToDie: 5
     IsRandomReward: 0
-    RewardPerKill: 10
+    RewardPerKill: 15
     CurrentHits: 0
     Value: 100
     Icon: {fileID: 1813969021, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+  Levels:
+  - SpawnOrderType: 0600000006000000060000000600000006000000060000000600000008000000070000000700000006000000060000000700000006000000060000000700000006000000070000000600000006000000080000000800000008000000080000000800000008000000
+    SpawnSpeed: 3

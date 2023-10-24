@@ -8,3 +8,11 @@ public class EnemyController : WorldObject
     }
 
 }
+
+public enum EnemyNames
+{
+    ButterFlast = 6,
+    TophBluf,
+    PotBot,
+    TankHank = 7,
+}
