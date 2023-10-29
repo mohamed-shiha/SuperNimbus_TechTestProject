@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using UnityEngine;
 
 public enum ObjectType
@@ -19,16 +18,21 @@ public struct SpawnData
     public string Name;
     public int HitsToDie;
     public bool IsRandomReward;
-    [SerializeField] int RewardPerKill;
-    public int CurrentHits;
+    public int RewardPerKill;
+    //public int CurrentHits;
     public int Value;
-    public Sprite Icon;
+    public string IconName;
 
     int randomReward;
 
+    public Sprite GetIcon()
+    {
+        return DataManager.Instance.GetSpriteByName(IconName);
+    }
+
     public int GetRewardPerKill()
     {
-        if(IsRandomReward && randomReward == -99)
+        if (IsRandomReward && randomReward == -99)
         {
             ResetReward();
         }
@@ -39,25 +43,21 @@ public struct SpawnData
     {
         randomReward = UnityEngine.Random.Range(1, RewardPerKill + 1);
     }
-    //public Vector2 MovementDirection;
 
-    public SpawnData(int iD, float speed, ObjectType type, string name, int hitsToDie, int rewardPerKill, int cost = 0, Sprite icon = null)
+    public SpawnData(int iD, float speed, ObjectType type, string name, int hitsToDie, int rewardPerKill, int cost = 0, string iconName = "")
     {
         ID = iD;
         Speed = speed;
         Type = type;
         Name = name;
         HitsToDie = hitsToDie;
-        CurrentHits = 0;
+        //CurrentHits = 0;
         RewardPerKill = rewardPerKill;
         IsRandomReward = true;
         Value = cost;
-        Icon = icon;
         randomReward = -99;
+        IconName = iconName;
     }
-
-
-
 }
 
 

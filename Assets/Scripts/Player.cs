@@ -17,7 +17,8 @@ public class Player : MonoBehaviour
 
     MouseMode mouseMode;
     int selectedTowerID;
-    List<SpawnData> unlokedTowers;
+    //private List<SpawnData> unlokedTowers;
+    List<Vector3Int> SpawnPositions;
 
     private void Awake()
     {
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+
         switch (mouseMode)
         {
             case MouseMode.Check:
@@ -50,6 +52,11 @@ public class Player : MonoBehaviour
                     {
                         buildTiles.SetColliderType(cellPos, Tile.ColliderType.None);
                         GameManager.Instance.SpawnTower(selectedTowerID, cellCenter);
+                        if (SpawnPositions == null)
+                        {
+                            SpawnPositions = new();
+                        }
+                        SpawnPositions.Add(cellPos);
                         mouseMode = MouseMode.Select;
                         HighlightSprite.transform.position = Vector3.one * 1111;
                     }
@@ -60,7 +67,7 @@ public class Player : MonoBehaviour
                 }
                 break;
         }
-        
+
     }
 
     private void TowerSelected(int newID)
@@ -71,11 +78,25 @@ public class Player : MonoBehaviour
 
     public void OnTowerUnlocked(int id)
     {
-        unlokedTowers.Add(GameManager.Instance.AllData[ObjectType.Tower, id]);
+        //unlokedTowers.Add(GameManager.Instance.AllData[ObjectType.Tower, id]);
     }
 
-    internal SpawnData[] GetUnlockedTowers()
+    internal void OnRestart()
     {
-        return unlokedTowers.ToArray();
+        mouseMode = MouseMode.Select;
+        HighlightSprite.transform.position = Vector3.one * 1111;
+        if (SpawnPositions != null && SpawnPositions.Count > 0)
+        {
+            foreach (var cellPos in SpawnPositions)
+            {
+                buildTiles.SetColliderType(cellPos, Tile.ColliderType.Sprite);
+            }
+            SpawnPositions.Clear();
+        }
     }
+
+    /*    internal SpawnData[] GetUnlockedTowers()
+        {
+            return unlokedTowers.ToArray();
+        }*/
 }

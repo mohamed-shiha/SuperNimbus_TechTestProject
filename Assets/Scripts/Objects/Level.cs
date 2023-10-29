@@ -6,6 +6,7 @@ public class Level
 {
 
     [SerializeField] EnemyNames[] SpawnOrderType;
+    [SerializeField] string Name;
     int currentEnemy = 0;
     int StartingGold;
 
@@ -36,7 +37,13 @@ public class Level
 
     internal Level GetCopy()
     {
-        return new Level(SpawnOrderType,StartingGold,SpawnSpeed);
+        return new Level(SpawnOrderType, StartingGold, SpawnSpeed);
+    }
+
+    internal void OnRestart()
+    {
+        currentEnemy = 0;
+        //TODO: reset gold value
     }
 }
 

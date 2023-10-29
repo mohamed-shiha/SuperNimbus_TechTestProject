@@ -9,7 +9,7 @@ public class KillZone : MonoBehaviour
         WorldObject other = collision.GetComponent<WorldObject>();
         if (other != null && other.tag.Equals(TargetTag, System.StringComparison.OrdinalIgnoreCase))
         {
-            other.Die(new SpawnData() { Name = "KillZone"});
+            other.Die(new SpawnData() { Name = "KillZone" });
         }
     }
 }

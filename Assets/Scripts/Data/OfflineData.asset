@@ -20,9 +20,8 @@ MonoBehaviour:
     HitsToDie: 1
     IsRandomReward: 0
     RewardPerKill: 0
-    CurrentHits: 0
     Value: 0
-    Icon: {fileID: 0}
+    IconName: 
   - ID: 7
     Speed: 1.5
     Type: 2
@@ -30,9 +29,8 @@ MonoBehaviour:
     HitsToDie: 8
     IsRandomReward: 0
     RewardPerKill: 0
-    CurrentHits: 0
     Value: 0
-    Icon: {fileID: 0}
+    IconName: 
   - ID: 8
     Speed: 2.5
     Type: 2
@@ -40,9 +38,8 @@ MonoBehaviour:
     HitsToDie: 5
     IsRandomReward: 0
     RewardPerKill: 0
-    CurrentHits: 0
     Value: 0
-    Icon: {fileID: 0}
+    IconName: 
   - ID: 9
     Speed: 1.5
     Type: 2
@@ -50,9 +47,8 @@ MonoBehaviour:
     HitsToDie: 10
     IsRandomReward: 0
     RewardPerKill: 0
-    CurrentHits: 0
     Value: 0
-    Icon: {fileID: 0}
+    IconName: 
   Towers:
   - ID: 0
     Speed: 1
@@ -61,9 +57,8 @@ MonoBehaviour:
     HitsToDie: 5
     IsRandomReward: 0
     RewardPerKill: 1
-    CurrentHits: 0
     Value: 3
-    Icon: {fileID: -790328767, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    IconName: characters_165
   - ID: 1
     Speed: 0.5
     Type: 3
@@ -71,9 +66,8 @@ MonoBehaviour:
     HitsToDie: 5
     IsRandomReward: 0
     RewardPerKill: 2
-    CurrentHits: 0
     Value: 20
-    Icon: {fileID: 511124573, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    IconName: characters_164
   - ID: 2
     Speed: 0.3
     Type: 3
@@ -81,9 +75,8 @@ MonoBehaviour:
     HitsToDie: 5
     IsRandomReward: 0
     RewardPerKill: 3
-    CurrentHits: 0
     Value: 30
-    Icon: {fileID: 224941661, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    IconName: characters_163
   - ID: 3
     Speed: 0.1
     Type: 3
@@ -91,9 +84,9 @@ MonoBehaviour:
     HitsToDie: 5
     IsRandomReward: 0
     RewardPerKill: 15
-    CurrentHits: 0
     Value: 100
-    Icon: {fileID: 1813969021, guid: 0c1e734fa85636743af3bc22c6d99ba8, type: 3}
+    IconName: characters_162
   Levels:
   - SpawnOrderType: 0600000006000000060000000600000006000000060000000600000008000000070000000700000006000000060000000700000006000000060000000700000006000000070000000600000006000000080000000800000008000000080000000800000008000000
+    Name: Debug
     SpawnSpeed: 3

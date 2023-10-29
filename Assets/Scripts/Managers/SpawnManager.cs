@@ -6,6 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField] WorldObject[] Prefabs;
     [SerializeField] int RewardID;
+    [SerializeField] Transform SpawnedObjectsParents;
     ObjectsQueueSpawner<NormalBullet> bulletSpawner;
     ObjectsQueueSpawner<RewardDisplayObject> rewardsSpawner;
     ObjectsListSpawner<EnemyController> enemySpawner;
@@ -62,7 +63,7 @@ public class SpawnManager : MonoBehaviour
         {
             T prefabe = Prefabs.OfType<T>().First(obj => obj.ID == id);
             T result;
-            result = Instantiate(prefabe);
+            result = Instantiate(prefabe, SpawnedObjectsParents);
             return result;
         }
         catch (System.Exception)
@@ -70,11 +71,13 @@ public class SpawnManager : MonoBehaviour
 
             Debug.LogError($"Cannot find prefabe of type {typeof(T)}");
             throw;
-        }   
+        }
     }
 
-    public void TakeBackObject<T>(T returnedObject)
+    public void TakeBackObject<T>(T returnedObject) where T : WorldObject
     {
+        returnedObject.gameObject.SetActive(false);
+
         if (returnedObject is NormalBullet bullet)
         {
             bulletSpawner.TakeBack(bullet);
@@ -99,6 +102,18 @@ public class SpawnManager : MonoBehaviour
             return;
         }
 
+    }
+
+    public void CleanScene()
+    {
+        var activeObjects = SpawnedObjectsParents.GetComponentsInChildren<WorldObject>()
+            .Where(obj => obj.isActiveAndEnabled);
+
+        foreach (var item in activeObjects)
+        {
+            item.RestartDead();
+            TakeBackObject(item);
+        }
     }
 
     private void DebugUpdateText()

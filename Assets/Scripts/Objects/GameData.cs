@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/GameData", fileName = "NewGameData")]
@@ -7,7 +6,9 @@ public class GameData : ScriptableObject
 {
     public SpawnData[] Enemies;
     public SpawnData[] Towers;
-    public Level[] Levels;
+    [SerializeField] Level[] Levels;
+
+    public Level GetLevel(int index) => Levels[index].GetCopy();
 
     public SpawnData this[ObjectType type, int id]
     {

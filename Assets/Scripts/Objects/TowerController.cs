@@ -37,5 +37,6 @@ public class TowerController : WorldObject
         transform.position = newPos;
         // reset the health to be full health
         CurrentHits = 0;
+        animator.SetFloat("AttackSpeed", Data.Speed);
     }
 }

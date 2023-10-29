@@ -10,7 +10,7 @@ public class NormalBullet : WorldObject
             // if the object can take damage from this bullet then deal damage and recycle the bullet
             if (other.GetHitFrom == ObjectType.Bullet)
             {
-                other.GetHit(Data);
+                other.TakeDamage(Data);
                 Die(other.Data);
             }
         }

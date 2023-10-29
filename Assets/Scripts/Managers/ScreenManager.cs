@@ -21,6 +21,7 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Transform menusParent;
     // the player's tower select UI parent
     [SerializeField] Transform PlayerTowersParent;
+    [SerializeField] Transform PlayOfflineButton;
     [SerializeField] TowerButton TowerSelectButtonPrefab;
     [SerializeField] TowerButton TowerUnlockButtonPrefab;
     [SerializeField] TextMeshProUGUI GoldText;
@@ -28,19 +29,21 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Animator animator;
 
     ScreenRef currentScreen;
-    ScreenRef preiviousScreen;
-    ScreensTitles afterPauseScreen;
+    //ScreenRef preiviousScreen;
+    //ScreensTitles afterPauseScreen;
 
-    void Start()
+    private void Start()
     {
         // start the game with the connection screen
         // make sure the main ui is active 
         menusParent.gameObject.SetActive(true);
+        PlayOfflineButton.gameObject.SetActive(false);
         // show connection screen
         GoToScreen(ScreensTitles.LogIn);
         // subscribe to the connection events
-        ConnectionManager.Instance.OnConnected += OnLoginOK;
-        ConnectionManager.Instance.OnStartOffLine += OnLoginOK;
+        DataManager.Instance.OnDataReady += StartMainScreen;
+        ConnectionManager.Instance.OnConnectionFailed += ShowPlayOffline;
+        ConnectionManager.Instance.OnStartOffLine += StartMainScreen;
         GameManager.Instance.OnPlayerRewarded += UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged += UpdateLivesHud;
 
@@ -48,10 +51,17 @@ public class ScreenManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        ConnectionManager.Instance.OnConnected -= OnLoginOK;
-        ConnectionManager.Instance.OnStartOffLine -= OnLoginOK;
+        ConnectionManager.Instance.OnStartOffLine -= StartMainScreen;
+        DataManager.Instance.OnDataReady -= StartMainScreen;
+        //ConnectionManager.Instance.OnStartOffLine -= OnLoginOK;
         GameManager.Instance.OnPlayerRewarded -= UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged -= UpdateLivesHud;
+        ConnectionManager.Instance.OnConnectionFailed -= ShowPlayOffline;
+    }
+
+    private void ShowPlayOffline()
+    {
+        PlayOfflineButton.gameObject.SetActive(true);
     }
 
     private void UpdateLivesHud(int newLives)
@@ -62,7 +72,7 @@ public class ScreenManager : MonoBehaviour
     }
 
     // when we are connected or playing offline move to the main menu
-    public void OnLoginOK()
+    public void StartMainScreen()
     {
         GoToScreen(ScreensTitles.Main);
     }
@@ -96,7 +106,7 @@ public class ScreenManager : MonoBehaviour
 
         Screens[screen].Transform.gameObject.SetActive(true);
         currentScreen?.Transform.gameObject.SetActive(false);
-        preiviousScreen = currentScreen;
+        //preiviousScreen = currentScreen;
         currentScreen = Screens[screen];
     }
 
@@ -109,22 +119,29 @@ public class ScreenManager : MonoBehaviour
             foreach (SpawnData item in GameManager.Instance.GetPlayerUnlockedTowers())
             {
                 Instantiate(TowerSelectButtonPrefab, PlayerTowersParent)
-                    .SetData(item.ID, item.Value, item.Icon);
+                    .SetData(item.ID, item.Value, item.GetIcon());
             }
         }
         // switch screens
         GoToScreen(ScreensTitles.Gameplay);
         // start the game 
-        // TODO: need to make sure a level is selected for now use a debug level
         GameManager.Instance.StartLevel();
     }
+
+    Action UnPauseCallback;
 
     public void OnUnpauseAnimationEnd()
     {
         // tell the game the game is unpaused
         Time.timeScale = 1;
         // switch to screen 
-        GoToScreen(afterPauseScreen);
+        if(UnPauseCallback != null)
+        {
+            UnPauseCallback.Invoke();
+            UnPauseCallback = null;
+        }
+
+        //GoToScreen(afterPauseScreen);
     }
 
     public void OnPauseGame()
@@ -137,13 +154,27 @@ public class ScreenManager : MonoBehaviour
     public void OnResumeGame()
     {
         animator.SetTrigger("resume");
-        afterPauseScreen = ScreensTitles.Gameplay;
+        UnPauseCallback = new Action(() => 
+        {
+            GoToScreen(ScreensTitles.Gameplay);
+            Debug.Log("From Resume");
+        });
     }
 
     public void OnRestart()
     {
         // tell the game to restart
-        OnResumeGame();
+        
+        animator.SetTrigger("resume");
+        UnPauseCallback = new Action(() =>
+        {
+            GameManager.Instance.OnRestart();
+            //currentScreen = null;
+            // switch screens
+            GoToScreen(ScreensTitles.Gameplay);
+            Debug.Log("From Restart");
+        });
+
     }
 
     public void OnExit()
@@ -154,7 +185,12 @@ public class ScreenManager : MonoBehaviour
     public void OnExitToMainMenu()
     {
         animator.SetTrigger("resume");
-        afterPauseScreen = ScreensTitles.Main;
+        UnPauseCallback = new Action(() => 
+        {
+            GameManager.Instance.OnBackToMain();
+            GoToScreen(ScreensTitles.Main);
+            Debug.Log("From Exit To Main");
+        });
     }
 
     public void UpdatePlayerHud(int goldTotal, int killsTotal)

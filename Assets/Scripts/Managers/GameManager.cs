@@ -5,40 +5,31 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] SpawnManager SpawnManager;
-    [SerializeField] GameData Data;
-    [SerializeField] bool UseOfflineData;
-    [SerializeField] bool KeepSpawning;
-
-    int LevelReward;
-    int Kills;
-    [SerializeField] Level CurrentLevel;
-    Transform[] EnemySpawnPoints;
-    public Action<WorldObject, SpawnData> OnObjectDeath;
-    public Action<Level> OnGameStarted;
     public Action<int> OnTowerSelected;
     public Action<int> OnTowerUnlocked;
     public Action<int, int> OnPlayerRewarded;
     public Action<int> OnPlayerLivesChanged;
     public Player player;
 
-    public GameData AllData { get { return Data; } }
+    [SerializeField] SpawnManager SpawnManager;
+    [SerializeField] bool UseOfflineData;
+    [SerializeField] bool UseDebugeData;
+    [SerializeField] bool KeepSpawning;
 
+    GameData Data => DataManager.Instance.GetGameData(UseOfflineData);
+    int LevelReward;
+    int Kills;
+    Level CurrentLevel;
+    Transform[] EnemySpawnPoints;
 
-    private void OnEnable()
+    private void Start()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
-            DontDestroyOnLoad(SpawnManager);
-            SpawnManager.Initialize();
-            OnObjectDeath += OnObjectDeathCall;
-            OnGameStarted += OnGameStartedCall;
             EnemySpawnPoints = Camera.main.transform.GetChild(0).GetComponentsInChildren<Transform>();
+            SpawnManager.Initialize();
             player.gameObject.SetActive(true);
-            // test 
-            //OnGameStarted.Invoke(new Level(new int[] { 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6, 7, 8, 9, 6 }) { SpawnSpeed = 3.5f });
         }
         else
         {
@@ -46,24 +37,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        OnObjectDeath -= OnObjectDeathCall;
-        OnGameStarted -= OnGameStartedCall;
-    }
-
-    void OnGameStartedCall(Level level)
-    {
-        CurrentLevel = level;
-        SpawnNextEnemy();
-    }
-
-    public void RewardPlayer(int reward)
-    {
-        LevelReward += reward;
-    }
-
-    private void OnObjectDeathCall(WorldObject obj, SpawnData killData)
+    public void OnObjectDeathCall(WorldObject obj, SpawnData killData)
     {
         // return the object to the queue
         SpawnManager.TakeBackObject(obj);
@@ -101,8 +75,8 @@ public class GameManager : MonoBehaviour
             // the level ended
             // that means the player won 
             // invoke level ended event
-                // Connection -> save/update player gold with the level reward
-                // UI -> show level ended with kills and gold maybe some animation
+            // Connection -> save/update player gold with the level reward
+            // UI -> show level ended with kills and gold maybe some animation
 
             Debug.Log("Spawn Queue Finished");
             return;
@@ -124,17 +98,36 @@ public class GameManager : MonoBehaviour
 
     public SpawnData[] GetPlayerUnlockedTowers()
     {
-        var result = UseOfflineData ? Data.Towers : player.GetUnlockedTowers();
+        var result = Data.Towers;
+        //var result = UseOfflineData ? Data.Towers : player.GetUnlockedTowers();
         return result;
     }
 
-    public void StartLevel(Level newLevel = null)
+    // TODO: need to make sure a level is selected for now use a debug level
+    public void StartLevel()
     {
-        if (newLevel == null)
+        if (CurrentLevel == null)
         {
-            newLevel = Data.Levels[0].GetCopy();
+            CurrentLevel = Data.GetLevel(0);
         }
-        OnGameStarted(newLevel);
+
+        SpawnNextEnemy();
     }
 
+    public void OnRestart()
+    {
+        CancelInvoke("SpawnNextEnemy");
+        SpawnManager.CleanScene();
+        player.OnRestart();
+        CurrentLevel.OnRestart();
+        StartLevel();
+    }
+
+    public void OnBackToMain()
+    {
+        CancelInvoke("SpawnNextEnemy");
+        SpawnManager.CleanScene();
+        player.OnRestart();
+        CurrentLevel.OnRestart();
+    }
 }

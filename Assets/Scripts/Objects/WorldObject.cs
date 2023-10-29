@@ -21,7 +21,7 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
 
     public virtual void OnDeath(SpawnData killer)
     {
-        GameManager.Instance.OnObjectDeath(this, killer);
+        GameManager.Instance.OnObjectDeathCall(this, killer);
     }
 
     public void Die(SpawnData killerData)
@@ -48,13 +48,18 @@ public abstract class WorldObject : MonoBehaviour, ISpawned
         rigidbodyS.velocity = Data.Speed * dir;
     }
 
+    public virtual void RestartDead()
+    {
+        transform.position = Data.Type == ObjectType.Enemy ? GetRandomVector() * -1 : GetRandomVector();
+    }
+
     public virtual void SetData(SpawnData spawnData)
     {
         Data = spawnData;
         ID = Data.ID;
     }
 
-    public void GetHit(SpawnData hitFrom)
+    public virtual void TakeDamage(SpawnData hitFrom)
     {
         CurrentHits += 1;
         if (CurrentHits >= Data.HitsToDie) Die(hitFrom);
