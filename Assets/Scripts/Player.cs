@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -22,12 +21,12 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.OnTowerSelected += TowerSelected;
+        GameManager.Instance.OnTowerSelected += OnTowerSelected;
     }
 
     private void OnDestroy()
     {
-        GameManager.Instance.OnTowerSelected -= TowerSelected;
+        GameManager.Instance.OnTowerSelected -= OnTowerSelected;
     }
 
     private void Update()
@@ -70,15 +69,10 @@ public class Player : MonoBehaviour
 
     }
 
-    private void TowerSelected(int newID)
+    private void OnTowerSelected(int newID)
     {
         selectedTowerID = newID;
         mouseMode = MouseMode.Check;
-    }
-
-    public void OnTowerUnlocked(int id)
-    {
-        //unlokedTowers.Add(GameManager.Instance.AllData[ObjectType.Tower, id]);
     }
 
     internal void OnRestart()
@@ -95,8 +89,4 @@ public class Player : MonoBehaviour
         }
     }
 
-    /*    internal SpawnData[] GetUnlockedTowers()
-        {
-            return unlokedTowers.ToArray();
-        }*/
 }

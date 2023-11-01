@@ -9,18 +9,26 @@ public class GameManager : MonoBehaviour
     public Action<int> OnTowerUnlocked;
     public Action<int, int> OnPlayerRewarded;
     public Action<int> OnPlayerLivesChanged;
-    public Player player;
 
+    [SerializeField] DataSource dataSource;
+    [SerializeField] Player player;
     [SerializeField] SpawnManager SpawnManager;
-    [SerializeField] bool UseOfflineData;
-    [SerializeField] bool UseDebugeData;
     [SerializeField] bool KeepSpawning;
+    [SerializeField] bool ForceDebug;
 
-    GameData Data => DataManager.Instance.GetGameData(UseOfflineData);
+    public GameData Data => DataManager.Instance.GetGameData(dataSource);
     int LevelReward;
     int Kills;
     Level CurrentLevel;
     Transform[] EnemySpawnPoints;
+
+    public void SetDataSource(DataSource newSource)
+    {
+        if (!ForceDebug)
+        {
+            dataSource = newSource;
+        }
+    }
 
     private void Start()
     {
@@ -56,7 +64,7 @@ public class GameManager : MonoBehaviour
 
             if (killData.Name.ToLower().Contains("killzone"))
             {
-                // reduce player lives 
+                //TODO: reduce player lives 
                 OnPlayerLivesChanged.Invoke(1);
             }
         }
@@ -72,7 +80,7 @@ public class GameManager : MonoBehaviour
     {
         if (!CurrentLevel.HasNext() && !KeepSpawning)
         {
-            // the level ended
+            // the level finished spawning
             // that means the player won 
             // invoke level ended event
             // Connection -> save/update player gold with the level reward
@@ -87,7 +95,7 @@ public class GameManager : MonoBehaviour
         var pos = point.position;
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
-        Invoke("SpawnNextEnemy", CurrentLevel.SpawnSpeed);
+        Invoke(nameof(SpawnNextEnemy), CurrentLevel.SpawnSpeed);
     }
 
     public void SpawnTower(int id, Vector3 pos)
@@ -116,16 +124,19 @@ public class GameManager : MonoBehaviour
 
     public void OnRestart()
     {
-        CancelInvoke("SpawnNextEnemy");
-        SpawnManager.CleanScene();
-        player.OnRestart();
-        CurrentLevel.OnRestart();
+        CleanDataAndObjects();
         StartLevel();
     }
 
     public void OnBackToMain()
     {
-        CancelInvoke("SpawnNextEnemy");
+        CleanDataAndObjects();
+        CurrentLevel.OnRestart();
+    }
+
+    private void CleanDataAndObjects()
+    {
+        CancelInvoke(nameof(SpawnNextEnemy));
         SpawnManager.CleanScene();
         player.OnRestart();
         CurrentLevel.OnRestart();

@@ -29,8 +29,6 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Animator animator;
 
     ScreenRef currentScreen;
-    //ScreenRef preiviousScreen;
-    //ScreensTitles afterPauseScreen;
 
     private void Start()
     {
@@ -42,8 +40,6 @@ public class ScreenManager : MonoBehaviour
         GoToScreen(ScreensTitles.LogIn);
         // subscribe to the connection events
         DataManager.Instance.OnDataReady += StartMainScreen;
-        ConnectionManager.Instance.OnConnectionFailed += ShowPlayOffline;
-        ConnectionManager.Instance.OnStartOffLine += StartMainScreen;
         GameManager.Instance.OnPlayerRewarded += UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged += UpdateLivesHud;
 
@@ -51,17 +47,9 @@ public class ScreenManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        ConnectionManager.Instance.OnStartOffLine -= StartMainScreen;
         DataManager.Instance.OnDataReady -= StartMainScreen;
-        //ConnectionManager.Instance.OnStartOffLine -= OnLoginOK;
         GameManager.Instance.OnPlayerRewarded -= UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged -= UpdateLivesHud;
-        ConnectionManager.Instance.OnConnectionFailed -= ShowPlayOffline;
-    }
-
-    private void ShowPlayOffline()
-    {
-        PlayOfflineButton.gameObject.SetActive(true);
     }
 
     private void UpdateLivesHud(int newLives)
@@ -105,7 +93,11 @@ public class ScreenManager : MonoBehaviour
         }
 
         Screens[screen].Transform.gameObject.SetActive(true);
-        currentScreen?.Transform.gameObject.SetActive(false);
+        if(currentScreen?.Transform != null)
+        {
+            currentScreen.Transform.gameObject.SetActive(false);
+        }
+        
         //preiviousScreen = currentScreen;
         currentScreen = Screens[screen];
     }
@@ -116,7 +108,7 @@ public class ScreenManager : MonoBehaviour
         if (unlockedTowers.Length > PlayerTowersParent.childCount)
         {
             // spawn buttons
-            foreach (SpawnData item in GameManager.Instance.GetPlayerUnlockedTowers())
+            foreach (SpawnData item in unlockedTowers.Skip(PlayerTowersParent.childCount))
             {
                 Instantiate(TowerSelectButtonPrefab, PlayerTowersParent)
                     .SetData(item.ID, item.Value, item.GetIcon());
@@ -125,6 +117,7 @@ public class ScreenManager : MonoBehaviour
         // switch screens
         GoToScreen(ScreensTitles.Gameplay);
         // start the game 
+        UpdatePlayerHud(GameManager.Instance.Data.GetGold(),0);
         GameManager.Instance.StartLevel();
     }
 

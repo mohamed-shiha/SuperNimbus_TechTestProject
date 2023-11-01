@@ -4842,11 +4842,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 365d0ddd20796d54fa140ad2d28362b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dataSource: 0
   player: {fileID: 851085527}
   SpawnManager: {fileID: 916843164}
-  UseOfflineData: 0
-  UseDebugeData: 0
   KeepSpawning: 0
+  ForceDebug: 0
 --- !u!4 &897877407
 Transform:
   m_ObjectHideFlags: 0
@@ -5509,8 +5509,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charactersSpriteSheet: characters
+  StartingGoldAmount: 10
   DebugData: {fileID: 11400000, guid: 002ed077d843f7f4a93dcd7a1f918ef8, type: 2}
-  localData: {fileID: 0}
+  localData: {fileID: 11400000, guid: 2f83f5a5969b91e46b5630ed6444714f, type: 2}
 --- !u!4 &1397488177
 Transform:
   m_ObjectHideFlags: 0
@@ -6738,7 +6739,7 @@ MonoBehaviour:
   HostName: localhost
   Port: 7350
   ServerKey: defaultkey
-  PlayOffLine: 0
+  ForceOffline: 0
 --- !u!224 &1727558350 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5237456573150332447, guid: d13507f675f4ebe4db3567714a419994, type: 3}

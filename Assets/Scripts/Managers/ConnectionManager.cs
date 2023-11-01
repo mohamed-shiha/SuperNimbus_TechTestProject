@@ -14,7 +14,7 @@ public class ConnectionManager : MonoBehaviour
     [SerializeField] string HostName;
     [SerializeField] int Port;
     [SerializeField] string ServerKey;
-    [SerializeField] bool PlayOffLine;
+    [SerializeField] bool ForceOffline;
 
     IClient client;
     ISession session;
@@ -29,7 +29,7 @@ public class ConnectionManager : MonoBehaviour
 
     readonly string TowersKeyPrefix = "Tower";
     readonly string EnemiesKeyPrefix = "Enemy";
-    readonly string LevelsKeyPrefix = "Levels";
+    //readonly string LevelsKeyPrefix = "Levels";
     readonly string UnlocksCollection = "Unlocks";
     readonly string DataCollection = "MainData";
 
@@ -42,13 +42,14 @@ public class ConnectionManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
-            if (!PlayOffLine)
+            if (!ForceOffline)
             {
-                StartCoroutine("TryConnect");
+                StartCoroutine(nameof(TryConnect));
             }
             else
             {
-                OnStartOffLine?.Invoke();
+                // delay invoke to give time to other classes to subscribe to offline event
+                Invoke(nameof(StartOffline), 0.5f);  
             }
         }
         else
@@ -69,11 +70,16 @@ public class ConnectionManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Not Connected");
+            Debug.Log("Connection Failed");
             OnConnectionFailed?.Invoke();
         }
     }
 
+    private void StartOffline()
+    {
+        GameManager.Instance.SetDataSource(DataSource.Local);
+        OnStartOffLine?.Invoke();
+    }
 
     public async Task UnlockTowerForPlayer(int[] towerIDs)
     {
@@ -82,10 +88,7 @@ public class ConnectionManager : MonoBehaviour
         // if we have add to it 
         // else just send the new one 
 
-        var unlcokedTowersIds = new ArrayStoreObject<int>
-        {
-            Data = towerIDs
-        };
+        var unlcokedTowersIds = new ArrayWrapper<int>(towerIDs);
 
         string towersJson = JsonWriter.ToJson(unlcokedTowersIds);
 
@@ -215,10 +218,4 @@ public class ConnectionManager : MonoBehaviour
 
 #endif
 
-}
-
-[Serializable]
-public class ArrayStoreObject<T>
-{
-    public T[] Data;
 }
