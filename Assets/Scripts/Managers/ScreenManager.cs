@@ -1,3 +1,4 @@
+using Satori;
 using System;
 using System.Linq;
 using TMPro;
@@ -10,7 +11,8 @@ public enum ScreensTitles
     TowerUnlock,
     Levels,
     Gameplay,
-    Pause
+    Pause,
+    WinLose
 }
 
 public class ScreenManager : MonoBehaviour
@@ -42,6 +44,7 @@ public class ScreenManager : MonoBehaviour
         DataManager.Instance.OnDataReady += StartMainScreen;
         GameManager.Instance.OnPlayerRewarded += UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged += UpdateLivesHud;
+        GameManager.Instance.OnLevelEnded += ShowWinLoseScreen;
 
     }
 
@@ -50,7 +53,20 @@ public class ScreenManager : MonoBehaviour
         DataManager.Instance.OnDataReady -= StartMainScreen;
         GameManager.Instance.OnPlayerRewarded -= UpdatePlayerHud;
         GameManager.Instance.OnPlayerLivesChanged -= UpdateLivesHud;
+        GameManager.Instance.OnLevelEnded -= ShowWinLoseScreen;
     }
+
+    private void ShowWinLoseScreen(bool isWin)
+    {
+        string winLoseText = isWin ? "You Win" : "Try again";
+        Screens[ScreensTitles.WinLose]
+            .Transform
+            .GetComponent<WinLoseScreen>()
+            .UpdateResult(winLoseText, new string[] { GoldText.text, KillsText.text });
+        Screens[ScreensTitles.WinLose]
+            .Transform.gameObject.SetActive(true);
+    }
+
 
     private void UpdateLivesHud(int newLives)
     {
@@ -80,6 +96,7 @@ public class ScreenManager : MonoBehaviour
             case ScreensTitles.Main:
                 Time.timeScale = 1;
                 menusParent.gameObject.SetActive(true);
+                Screens[ScreensTitles.WinLose].Transform.gameObject.SetActive(false);
                 break;
             case ScreensTitles.TowerUnlock:
                 break;
@@ -87,17 +104,18 @@ public class ScreenManager : MonoBehaviour
                 break;
             case ScreensTitles.Gameplay:
                 menusParent.gameObject.SetActive(false);
+                Screens[ScreensTitles.WinLose].Transform.gameObject.SetActive(false);
                 break;
             case ScreensTitles.Pause:
                 break;
         }
 
         Screens[screen].Transform.gameObject.SetActive(true);
-        if(currentScreen?.Transform != null)
+        if (currentScreen?.Transform != null && currentScreen.Title != screen)
         {
             currentScreen.Transform.gameObject.SetActive(false);
         }
-        
+
         //preiviousScreen = currentScreen;
         currentScreen = Screens[screen];
     }
@@ -117,7 +135,7 @@ public class ScreenManager : MonoBehaviour
         // switch screens
         GoToScreen(ScreensTitles.Gameplay);
         // start the game 
-        UpdatePlayerHud(GameManager.Instance.Data.GetGold(),0);
+        UpdatePlayerHud(GameManager.Instance.Data.GetGold(), 0);
         GameManager.Instance.StartLevel();
     }
 
@@ -128,13 +146,11 @@ public class ScreenManager : MonoBehaviour
         // tell the game the game is unpaused
         Time.timeScale = 1;
         // switch to screen 
-        if(UnPauseCallback != null)
+        if (UnPauseCallback != null)
         {
             UnPauseCallback.Invoke();
             UnPauseCallback = null;
         }
-
-        //GoToScreen(afterPauseScreen);
     }
 
     public void OnPauseGame()
@@ -147,26 +163,34 @@ public class ScreenManager : MonoBehaviour
     public void OnResumeGame()
     {
         animator.SetTrigger("resume");
-        UnPauseCallback = new Action(() => 
+        UnPauseCallback = new Action(() =>
         {
             GoToScreen(ScreensTitles.Gameplay);
             Debug.Log("From Resume");
         });
     }
 
-    public void OnRestart()
+    public void OnRestart(bool playAnimation)
     {
-        // tell the game to restart
-        
-        animator.SetTrigger("resume");
-        UnPauseCallback = new Action(() =>
+        if (playAnimation)
+        {
+            animator.SetTrigger("resume");
+
+            UnPauseCallback = new Action(() =>
+            {
+                GameManager.Instance.OnRestart();
+                // switch screens
+                GoToScreen(ScreensTitles.Gameplay);
+                Debug.Log("From Restart");
+            });
+        }
+        else
         {
             GameManager.Instance.OnRestart();
-            //currentScreen = null;
             // switch screens
             GoToScreen(ScreensTitles.Gameplay);
             Debug.Log("From Restart");
-        });
+        }
 
     }
 
@@ -175,15 +199,24 @@ public class ScreenManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void OnExitToMainMenu()
+    public void OnExitToMainMenu(bool playAnimation)
     {
-        animator.SetTrigger("resume");
-        UnPauseCallback = new Action(() => 
+        if (playAnimation)
+        {
+            animator.SetTrigger("resume");
+            UnPauseCallback = new Action(() =>
+            {
+                GameManager.Instance.OnBackToMain();
+                GoToScreen(ScreensTitles.Main);
+                Debug.Log("From Exit To Main");
+            });
+        }
+        else
         {
             GameManager.Instance.OnBackToMain();
             GoToScreen(ScreensTitles.Main);
             Debug.Log("From Exit To Main");
-        });
+        }
     }
 
     public void UpdatePlayerHud(int goldTotal, int killsTotal)

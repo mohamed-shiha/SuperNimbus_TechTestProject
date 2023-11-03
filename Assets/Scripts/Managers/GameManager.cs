@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public Action<int> OnTowerUnlocked;
     public Action<int, int> OnPlayerRewarded;
     public Action<int> OnPlayerLivesChanged;
+    public Action<bool> OnLevelEnded;
 
     [SerializeField] DataSource dataSource;
     [SerializeField] Player player;
@@ -17,8 +18,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool ForceDebug;
 
     public GameData Data => DataManager.Instance.GetGameData(dataSource);
-    int LevelReward;
+    int CurrentGold;
     int Kills;
+    int Lives = 3;
     Level CurrentLevel;
     Transform[] EnemySpawnPoints;
 
@@ -57,15 +59,20 @@ public class GameManager : MonoBehaviour
             {
                 SpawnManager.SpawnRewardUI(obj.transform.position, killData);
                 Kills++;
-                LevelReward += killData.GetRewardPerKill();
-                OnPlayerRewarded?.Invoke(LevelReward, Kills);
+                CurrentGold += killData.GetRewardPerKill();
+                OnPlayerRewarded?.Invoke(CurrentGold, Kills);
                 return;
             }
 
             if (killData.Name.ToLower().Contains("killzone"))
             {
                 //TODO: reduce player lives 
+                Lives--;
                 OnPlayerLivesChanged.Invoke(1);
+                if(Lives <= 0)
+                {
+                    GameOver(false);
+                }
             }
         }
 
@@ -85,7 +92,8 @@ public class GameManager : MonoBehaviour
             // invoke level ended event
             // Connection -> save/update player gold with the level reward
             // UI -> show level ended with kills and gold maybe some animation
-
+            
+            GameOver(true);
             Debug.Log("Spawn Queue Finished");
             return;
         }
@@ -96,6 +104,12 @@ public class GameManager : MonoBehaviour
         var data = Data[ObjectType.Enemy, id];
         SpawnManager.SpawnEnemy(id, pos, data);
         Invoke(nameof(SpawnNextEnemy), CurrentLevel.SpawnSpeed);
+    }
+
+    private void GameOver(bool isWin)
+    {
+        Time.timeScale = 0;
+        OnLevelEnded.Invoke(isWin);
     }
 
     public void SpawnTower(int id, Vector3 pos)
@@ -119,6 +133,15 @@ public class GameManager : MonoBehaviour
             CurrentLevel = Data.GetLevel(0);
         }
 
+        Time.timeScale = 1;
+        //TODO: get player's gold
+        if(CurrentGold == 0)
+        {
+            CurrentGold = CurrentLevel.StartingGold;
+        }
+        Kills = 0;
+        Lives = 3;
+        OnPlayerRewarded?.Invoke(CurrentGold, Kills);
         SpawnNextEnemy();
     }
 

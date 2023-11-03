@@ -8,7 +8,8 @@ public class Level
     [SerializeField] EnemyNames[] SpawnOrderType;
     [SerializeField] string Name;
     int currentEnemy = 0;
-    int StartingGold;
+
+    public int StartingGold { get; private set; }
 
     public float SpawnSpeed;
     public int EnemyCount => SpawnOrderType.Length;
