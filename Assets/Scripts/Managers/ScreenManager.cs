@@ -21,15 +21,19 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] Screens Screens;
     // the main UI game object
     [SerializeField] Transform menusParent;
+    //Tower Unlock 
+    [SerializeField] Transform TowersUnlockContentParent;
+    [SerializeField] ConfirmPanel confirmScreen;
     // the player's tower select UI parent
     [SerializeField] Transform PlayerTowersParent;
     [SerializeField] Transform PlayOfflineButton;
     [SerializeField] TowerButton TowerSelectButtonPrefab;
-    [SerializeField] TowerButton TowerUnlockButtonPrefab;
+    [SerializeField] TowerUnlockItem TowerUnlockButtonPrefab;
     [SerializeField] TextMeshProUGUI GoldText;
     [SerializeField] TextMeshProUGUI KillsText;
     [SerializeField] Animator animator;
 
+    Action UnPauseCallback;
     ScreenRef currentScreen;
 
     private void Start()
@@ -67,7 +71,6 @@ public class ScreenManager : MonoBehaviour
             .Transform.gameObject.SetActive(true);
     }
 
-
     private void UpdateLivesHud(int newLives)
     {
         // update the lives UI 
@@ -77,6 +80,11 @@ public class ScreenManager : MonoBehaviour
 
     // when we are connected or playing offline move to the main menu
     public void StartMainScreen()
+    {
+        GoToScreen(ScreensTitles.Main);
+    }
+
+    public void BackToMain()
     {
         GoToScreen(ScreensTitles.Main);
     }
@@ -99,6 +107,24 @@ public class ScreenManager : MonoBehaviour
                 Screens[ScreensTitles.WinLose].Transform.gameObject.SetActive(false);
                 break;
             case ScreensTitles.TowerUnlock:
+                if (TowersUnlockContentParent.childCount == 0)
+                {
+                    // all the towers
+                    var data = DataManager.Instance.GetGameData(DataSource.Debug).Towers;
+                    // players towers
+                    var playerData = GameManager.Instance.GetPlayerUnlockedTowers();
+                    //spawn a button for each tower in debug data
+                    foreach (var tower in data)
+                    {
+                        var item = Instantiate(TowerUnlockButtonPrefab, TowersUnlockContentParent);
+                        item.SetData(
+                            tower.ID
+                            , playerData.Any(i => i.ID == tower.ID)
+                            , (id) => TryUnlockTower(id, () => item.UpdateUnlocked(true))
+                            , DataManager.Instance.GetCameraTexture(tower.ID)
+                            );
+                    }
+                }
                 break;
             case ScreensTitles.Levels:
                 break;
@@ -120,6 +146,8 @@ public class ScreenManager : MonoBehaviour
         currentScreen = Screens[screen];
     }
 
+    public void GoToUnlockScreen() => GoToScreen(ScreensTitles.TowerUnlock);
+
     public void StartGame()
     {
         var unlockedTowers = GameManager.Instance.GetPlayerUnlockedTowers();
@@ -138,8 +166,6 @@ public class ScreenManager : MonoBehaviour
         UpdatePlayerHud(GameManager.Instance.Data.GetGold(), 0);
         GameManager.Instance.StartLevel();
     }
-
-    Action UnPauseCallback;
 
     public void OnUnpauseAnimationEnd()
     {
@@ -224,6 +250,23 @@ public class ScreenManager : MonoBehaviour
         GoldText.text = goldTotal.ToString();
         KillsText.text = killsTotal.ToString();
     }
+
+    public void TryUnlockTower(int id, Action callBack)
+    {
+        if (GameManager.Instance.CanPurchase(id))
+        {
+            confirmScreen.Show(() =>
+            {
+                //ConnectionManager.Instance.UnlockTowerForPlayer(new int[] { id }).Wait();
+                GameManager.Instance.UnlockTowerForPlayer(id);
+            }, callBack);
+        }
+        else
+        {
+            // Show Get more Gold 
+        }
+    }
+
 }
 
 [Serializable]

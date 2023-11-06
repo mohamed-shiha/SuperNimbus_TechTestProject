@@ -845,9 +845,9 @@ TextureImporter:
       name: sheet_white2x_33
       rect:
         serializedVersion: 2
-        x: 317
-        y: 1460
-        width: 65
+        x: 319
+        y: 1463
+        width: 66
         height: 66
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

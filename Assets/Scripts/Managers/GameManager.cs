@@ -121,7 +121,6 @@ public class GameManager : MonoBehaviour
     public SpawnData[] GetPlayerUnlockedTowers()
     {
         var result = Data.Towers;
-        //var result = UseOfflineData ? Data.Towers : player.GetUnlockedTowers();
         return result;
     }
 
@@ -163,5 +162,16 @@ public class GameManager : MonoBehaviour
         SpawnManager.CleanScene();
         player.OnRestart();
         CurrentLevel.OnRestart();
+    }
+
+    internal void UnlockTowerForPlayer(int id)
+    {
+        DataManager.Instance.UnlockTower(id);
+    }
+
+    internal bool CanPurchase(int id)
+    {
+        //TODO:: Add Gold check
+        return true;
     }
 }
