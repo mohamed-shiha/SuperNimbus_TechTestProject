@@ -76,7 +76,7 @@ public class DataManager : MonoBehaviour
 
         //TODO: get Gold and save it locally
         //TODO: get levels data from the cloud
-
+        OnlineData.SetLevels(DebugData.GetLevels());
 
         GameManager.Instance.SetDataSource(DataSource.Cloud);
         OnDataReady?.Invoke();

@@ -13,6 +13,7 @@ public class GameData : ScriptableObject
     public int GetGold() => Gold;
 
     public Level GetLevel(int index) => Levels[index].GetCopy();
+    public Level[] GetLevels() => Levels;
 
     public SpawnData this[ObjectType type, int id]
     {
@@ -22,8 +23,16 @@ public class GameData : ScriptableObject
         }
     }
 
+    internal void SetLevels(Level[] levels)
+    {
+        Levels = new Level[levels.Length];
+        levels.CopyTo(Levels, 0);
+    }
+
     internal void SetGold(int newTotal)
     {
         Gold = newTotal;
     }
+
+    
 }
